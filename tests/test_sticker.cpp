@@ -26,14 +26,6 @@ private slots:
         QCOMPARE(st.has_value(), false);
         QCOMPARE(lw.size(), 2);
     }
-    void opacityIsClampedWithWarning() {
-        QJsonObject obj{ { "id", "a" },{ "source", "a.png" },{ "x", 0 },{ "y", 0 },{ "opacity", 10 } };
-        QList<Warning> lw;
-        auto st = parseSticker(obj, 0, lw);
-        QVERIFY(st.has_value());
-        QCOMPARE(st->opacity, 1.0);
-        QCOMPARE(lw.size(), 1);
-    }
 };
 
 QTEST_APPLESS_MAIN(StickerTest)

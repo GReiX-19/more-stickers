@@ -12,17 +12,32 @@ static QString typeToString(QJsonValue::Type _type) {
     default: return QString();
     }
 }
-
-static bool readString(const QJsonObject& _obj, const QString& _key, bool _required,
-    QString& _out, const QString& _where, QList<Warning>& _warnings) {
+static void warnMissing(const QString& _where, const QString& _key, QList<Warning>& _warnings) {
+    _warnings.append(
+        Warning{
+            _where,
+            "\"" + _key + "\" is a required value",
+            Warning::Kind::Missing
+        }
+    );
+}
+static std::optional<bool> isContainedKey(const QJsonObject& _obj, const QString& _key, bool _required,
+    const QString& _where, QList<Warning>& _warnings) {
     if (!_obj.contains(_key)) {
         if (_required) {
-            _warnings.append(Warning{ _where, "\"" + _key + "\" is a required value." });
+            warnMissing(_where, _key, _warnings);
             return false;
         }
         else
             return true;
     }
+    return std::nullopt;
+}
+
+static bool readString(const QJsonObject& _obj, const QString& _key, bool _required,
+    QString& _out, const QString& _where, QList<Warning>& _warnings) {
+    if (auto isKey = isContainedKey(_obj, _key, _required, _where, _warnings))
+        return isKey.value();
 
     auto val = _obj.value(_key);
     if (!val.isString()) {
@@ -38,14 +53,8 @@ static bool readString(const QJsonObject& _obj, const QString& _key, bool _requi
 }
 static bool readDouble(const QJsonObject& _obj, const QString& _key, bool _required,
     double& _out, const QString& _where, QList<Warning>& _warnings) {
-    if (!_obj.contains(_key)) {
-        if (_required) {
-            _warnings.append(Warning{ _where, "\"" + _key + "\" is a required value." });
-            return false;
-        }
-        else
-            return true;
-    }
+    if (auto isKey = isContainedKey(_obj, _key, _required, _where, _warnings))
+        return isKey.value();
 
     auto val = _obj.value(_key);
     if (!val.isDouble()) {
@@ -67,6 +76,8 @@ std::optional<Sticker> parseSticker(const QJsonObject& _obj, int _index, QList<W
     bool ok = true;
 
     ok = readString(_obj, "id", true, st.id, where, _warnings) and ok;
+    if (ok) where += " (id: \"" + st.id + "\")";
+
     ok = readString(_obj, "source", true, st.source, where, _warnings) and ok;
     ok = readDouble(_obj, "x", true, st.x, where, _warnings) and ok;
     ok = readDouble(_obj, "y", true, st.y, where, _warnings) and ok;
