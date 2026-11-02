@@ -3,8 +3,7 @@
     "schemaVersion": 1,
     "stickers": [
         {
-            "id": "01",
-            "name": "sticker1",
+            "id": "stickerId",
             "source": "some sticker path",
             "enabled": true,
             "monitor": "screen1",

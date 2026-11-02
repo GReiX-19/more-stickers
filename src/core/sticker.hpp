@@ -12,7 +12,6 @@ enum class SizeMode {
 
 struct Sticker {
     QString id;
-    QString name;
     QString source;
     bool enabled = true;
     std::optional<QString> monitor;

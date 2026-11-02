@@ -5,13 +5,34 @@ class StickerTest : public QObject {
     Q_OBJECT;
 
 private slots:
+    void happyPath() {
+        QJsonObject obj{ { "id", "a" },{ "source", "a.png" },{ "x", 0 },{ "y", 0 } };
+        QList<Warning> lw;
+        auto st = parseSticker(obj, 0, lw);
+        QCOMPARE(st.has_value(), true);
+        QCOMPARE(lw.size(), 0);
+    }
+    void missingRequiredField() {
+        QJsonObject obj{ { "source", "a.png" },{ "x", 0 },{ "y", 0 } };
+        QList<Warning> lw;
+        auto st = parseSticker(obj, 0, lw);
+        QCOMPARE(st.has_value(), false);
+        QCOMPARE(lw.size(), 1);
+    }
+    void wrongType() {
+        QJsonObject obj{ { "id", 123 },{ "source", "a.png" },{ "x", "456" },{ "y", 0 } };
+        QList<Warning> lw;
+        auto st = parseSticker(obj, 0, lw);
+        QCOMPARE(st.has_value(), false);
+        QCOMPARE(lw.size(), 2);
+    }
     void opacityIsClampedWithWarning() {
-        QJsonObject o{ { "id", "a" },{ "source", "a.png" },{ "x", 0 },{ "y", 0 },{ "opacity", 10 } };
-        QList<Warning> w;
-        auto s = parseSticker(o, 0, w);
-        QVERIFY(s.has_value());
-        QCOMPARE(s->opacity, 1.0);
-        QCOMPARE(w.size(), 1);
+        QJsonObject obj{ { "id", "a" },{ "source", "a.png" },{ "x", 0 },{ "y", 0 },{ "opacity", 10 } };
+        QList<Warning> lw;
+        auto st = parseSticker(obj, 0, lw);
+        QVERIFY(st.has_value());
+        QCOMPARE(st->opacity, 1.0);
+        QCOMPARE(lw.size(), 1);
     }
 };
 
