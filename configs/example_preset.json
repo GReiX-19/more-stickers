@@ -1,0 +1,21 @@
+{
+    "name": "preset1",
+    "schemaVersion": 1,
+    "stickers": [
+        {
+            "id": "01",
+            "name": "sticker1",
+            "source": "some sticker path",
+            "enabled": true,
+            "monitor": "screen1",
+            "sizeMode": "size",
+            "scale": 1.0,
+            "x": 123,
+            "y": 456,
+            "width": 320,
+            "height": 240,
+            "rotation": 0,
+            "opacity": 1
+        }
+    ]
+}
