@@ -26,6 +26,13 @@ private slots:
         QCOMPARE(st.has_value(), false);
         QCOMPARE(lw.size(), 2);
     }
+    void nonEmptyProps() {
+        QJsonObject obj{ { "id", "" },{ "source", "" },{ "x", 0 },{ "y", 0 } };
+        QList<Warning> lw;
+        auto st = parseSticker(obj, 0, lw);
+        QCOMPARE(st.has_value(), false);
+        QCOMPARE(lw.size(), 2);
+    }
 };
 
 QTEST_APPLESS_MAIN(StickerTest)

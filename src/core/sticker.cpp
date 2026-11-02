@@ -4,7 +4,7 @@ static QString typeToString(QJsonValue::Type _type) {
     switch (_type) {
     case QJsonValue::Type::Array: return QString("array");
     case QJsonValue::Type::Bool: return QString("bool");
-    case QJsonValue::Type::Double: return QString("double");
+    case QJsonValue::Type::Double: return QString("number");
     case QJsonValue::Type::Null: return QString("null");
     case QJsonValue::Type::Object: return QString("object");
     case QJsonValue::Type::String: return QString("string");
@@ -16,8 +16,19 @@ static void warnMissing(const QString& _where, const QString& _key, QList<Warnin
     _warnings.append(
         Warning{
             _where,
-            "\"" + _key + "\" is a required value",
+            "\"" + _key + "\" is a required value - sticker skipped",
             Warning::Kind::Missing
+        }
+    );
+}
+static void warnWrongType(const QString& _where, const QString& _key, const QString& _expected,
+    const QJsonValue& _val, QList<Warning>& _warnings) {
+    _warnings.append(
+        Warning{
+            _where,
+            { "\"" + _key + "\" expected " + _expected + ", found " + typeToString(_val.type()) + " \"" +
+            _val.toVariant().toString() + "\" - sticker skipped" },
+            Warning::Kind::WrongType
         }
     );
 }
@@ -40,11 +51,8 @@ static bool readString(const QJsonObject& _obj, const QString& _key, bool _requi
         return isKey.value();
 
     auto val = _obj.value(_key);
-    if (!val.isString()) {
-        auto id = _obj.value("id");
-        _warnings.append(Warning{ _where, "(id: \"" + id.toString() + "\"): \"" + _key +
-            "\" expected string, found " + typeToString(val.type()) +
-            " \"" + val.toVariant().toString() + "\" - sticker skipped" });
+    if (!val.isString() or ((_key == "id" or _key == "source") and val.toString().isEmpty())) {
+        warnWrongType(_where, _key, "string", val, _warnings);
         return false;
     }
     _out = val.toString();
@@ -58,10 +66,7 @@ static bool readDouble(const QJsonObject& _obj, const QString& _key, bool _requi
 
     auto val = _obj.value(_key);
     if (!val.isDouble()) {
-        auto id = _obj.value("id");
-        _warnings.append(Warning{ _where, "(id: \"" + id.toString() + "\"): \"" + _key +
-            "\" expected number, found " + typeToString(val.type()) +
-            " \"" + val.toVariant().toString() + "\" - sticker skipped" });
+        warnWrongType(_where, _key, "number", val, _warnings);
         return false;
     }
     _out = val.toDouble();
