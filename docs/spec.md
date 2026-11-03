@@ -14,7 +14,7 @@
 | `source` | string | yes | none | non-empty, relative to the stickers folder |
 | `enabled` | bool | no | `true` |
 | `monitor` | string | no | first screen | named but not connected means hidden, not an error |
-| `x`, `y` | number | yes | none | logical pixels from the top-left of the screen |
+| `x`, `y` | number | no | `0` each | logical pixels from the top-left of the screen |
 | `sizeMode` | `"size"` or `"scale"` | no | `"size"` |
 | `width`, `height` | number | no | `200` each | read when `sizeMode` is `"size"` |
 | `scale` | number | no | `1.0` | read when `sizeMode` is `"scale"` |
