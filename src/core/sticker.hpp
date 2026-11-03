@@ -31,7 +31,8 @@ struct Warning {
         Duplicate,
         Clamped,
         Empty,
-        InvalidValue
+        InvalidValue,
+        OutOfRange,
     };
     QString where;
     QString message;

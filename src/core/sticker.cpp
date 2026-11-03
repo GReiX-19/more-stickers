@@ -1,4 +1,5 @@
 #include "sticker.hpp"
+#include <algorithm>
 
 static QString typeToString(QJsonValue::Type _type) {
     switch (_type) {
@@ -62,6 +63,24 @@ static void warnInvalidValue(const QString& _where, const QString& _key, const Q
         }
     );
 }
+static void warnOutOfRange(const QString& _where, const QString& _key, QList<Warning>& _warnings) {
+    _warnings.append(
+        Warning{
+            _where,
+            { ": \"" + _key + "\" is out of range - sticker skipped" },
+            Warning::Kind::OutOfRange
+        }
+    );
+}
+static void warnClamped(const QString& _where, const QString& _key, const double& _val, QList<Warning>& _warnings) {
+    _warnings.append(
+        Warning{
+            _where,
+            { ": \"" + _key + "\" = " + QString::number(_val) + " was clamped (0..1)" },
+            Warning::Kind::Clamped
+        }
+    );
+}
 static std::optional<bool> isContainedKey(const QJsonObject& _obj, const QString& _key, bool _required,
     const QString& _where, QList<Warning>& _warnings) {
     if (!_obj.contains(_key)) {
@@ -122,6 +141,19 @@ static bool readBool(const QJsonObject& _obj, const QString& _key, bool _require
     return true;
 }
 
+static void checkRange(const QJsonObject& _obj, const QString& _key, bool& _ok,
+    double& _out, const QString& _where, QList<Warning>& _warnings) {
+    double val;
+    _ok = readDouble(_obj, _key, false, val, _where, _warnings) and _ok;
+    if (val < 0) {
+        warnOutOfRange(_where, _key, _warnings);
+        _ok = false;
+    }
+    else {
+        _out = val;
+    }
+}
+
 std::optional<Sticker> parseSticker(const QJsonObject& _obj, int _index, QList<Warning>& _warnings) {
     Sticker st{};
     st.raw = _obj;
@@ -156,16 +188,30 @@ std::optional<Sticker> parseSticker(const QJsonObject& _obj, int _index, QList<W
         }
     }
 
-    // if (st.sizeMode == SizeMode::Size) {
-    //     ok = readDouble(_obj, "width", false, st.width, where, _warnings) and ok;
-    //     ok = readDouble(_obj, "height", false, st.height, where, _warnings) and ok;
-    // }
-    // else {
-    //     ok = readDouble(_obj, "scale", false, st.scale, where, _warnings) and ok;
-    // }
+    if (st.sizeMode == SizeMode::Size) {
+        if (_obj.contains("width")) {
+            checkRange(_obj, "width", ok, st.width, where, _warnings);
+        }
+        if (_obj.contains("height")) {
+            checkRange(_obj, "height", ok, st.height, where, _warnings);
+        }
+    }
+    else {
+        if (_obj.contains("scale")) {
+            checkRange(_obj, "scale", ok, st.scale, where, _warnings);
+        }
+    }
 
-    // ok = readDouble(_obj, "rotation", false, st.rotation, where, _warnings) and ok;
-    // ok = readDouble(_obj, "opacity", false, st.opacity, where, _warnings) and ok;
+    ok = readDouble(_obj, "rotation", false, st.rotation, where, _warnings) and ok;
+
+    if (_obj.contains("opacity")) {
+        double clampedOpacity;
+        ok = readDouble(_obj, "opacity", false, clampedOpacity, where, _warnings) and ok;
+        if (clampedOpacity < 0 or clampedOpacity > 1) {
+            st.opacity = std::clamp(clampedOpacity, 0.0, 1.0);
+            warnClamped(where, "opacity", clampedOpacity, _warnings);
+        }
+    }
 
     if (!ok)
         return std::nullopt;
