@@ -29,7 +29,8 @@ struct Warning {
         Missing,
         WrongType,
         Duplicate,
-        Clamped
+        Clamped,
+        Empty
     };
     QString where;
     QString message;

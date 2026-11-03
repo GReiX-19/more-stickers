@@ -29,7 +29,7 @@
 | Situation | Behaviour |
 | :--- | :--- |
 | Invalid JSON, wrong top-level shape, missing or unsupported `schemaVersion` | whole file rejected, keep last good state, warn |
-| Missing required field, or any wrong-typed field in a **sticker** | skip that sticker, warn |
+| Missing required field, or any wrong-typed field in a `sticker` | skip that sticker, warn |
 | Duplicate `id` | stip the later one, warn |
 | `opacity` out of range | clamp, warn |
 | Uknown key | ignore, but preserve on write |
