@@ -30,7 +30,8 @@ struct Warning {
         WrongType,
         Duplicate,
         Clamped,
-        Empty
+        Empty,
+        InvalidValue
     };
     QString where;
     QString message;

@@ -12,11 +12,19 @@ static QString typeToString(QJsonValue::Type _type) {
     default: return QString();
     }
 }
+static std::optional<SizeMode> parseSizeMode(const QString& _mode) {
+    if (_mode == "size")
+        return SizeMode::Size;
+    else if (_mode == "scale")
+        return SizeMode::Scale;
+
+    return std::nullopt;
+}
 static void warnMissing(const QString& _where, const QString& _key, QList<Warning>& _warnings) {
     _warnings.append(
         Warning{
             _where,
-            { "\"" + _key + "\" is a required value - sticker skipped" },
+            { ": \"" + _key + "\" is a required value - sticker skipped" },
             Warning::Kind::Missing
         }
     );
@@ -26,7 +34,7 @@ static void warnWrongType(const QString& _where, const QString& _key, const QStr
     _warnings.append(
         Warning{
             _where,
-            { "\"" + _key + "\" expected " + _expected + ", found " + typeToString(_val.type()) + " \"" +
+            { ": \"" + _key + "\" expected " + _expected + ", found " + typeToString(_val.type()) + " \"" +
             _val.toVariant().toString() + "\" - sticker skipped" },
             Warning::Kind::WrongType
         }
@@ -36,8 +44,21 @@ static void warnEmpty(const QString& _where, const QString& _key, QList<Warning>
     _warnings.append(
         Warning{
             _where,
-            { "\"" + _key + "\" must not be empty - sticker skipped" },
+            { ": \"" + _key + "\" must not be empty - sticker skipped" },
             Warning::Kind::Empty
+        }
+    );
+}
+static void warnInvalidValue(const QString& _where, const QString& _key, const QList<QString>& _allowedValues,
+    QList<Warning>& _warnings) {
+    QString alvals;
+    for (const auto val : _allowedValues)
+        alvals.append(val + " ");
+    _warnings.append(
+        Warning{
+            _where,
+            { ": \"" + _key + "\" must be only { " + alvals + "} - sticker skipped" },
+            Warning::Kind::InvalidValue
         }
     );
 }
@@ -111,20 +132,40 @@ std::optional<Sticker> parseSticker(const QJsonObject& _obj, int _index, QList<W
     if (ok) where += " (id: \"" + st.id + "\")";
 
     ok = readString(_obj, "source", true, true, st.source, where, _warnings) and ok;
-    ok = readBool(_obj, "enabled", true, st.enabled, where, _warnings) and ok;
-    //ok = readString(_obj, "monitor", true, false, st.monitor, where, _warnings) and ok;
-    ok = readDouble(_obj, "x", true, st.x, where, _warnings) and ok;
-    ok = readDouble(_obj, "y", true, st.y, where, _warnings) and ok;
-    //ok = readString(_obj, "sizeMode", true, false, st.sizeMode, where, _warnings) and ok;
-    if (st.sizeMode == SizeMode::Size) {
-        ok = readDouble(_obj, "width", true, st.width, where, _warnings) and ok;
-        ok = readDouble(_obj, "height", true, st.height, where, _warnings) and ok;
+    ok = readBool(_obj, "enabled", false, st.enabled, where, _warnings) and ok;
+
+    QString monitorName;
+    ok = readString(_obj, "monitor", false, false, monitorName, where, _warnings) and ok;
+    if (!monitorName.isEmpty())
+        st.monitor.emplace(monitorName);
+
+    ok = readDouble(_obj, "x", false, st.x, where, _warnings) and ok;
+    ok = readDouble(_obj, "y", false, st.y, where, _warnings) and ok;
+
+    if (_obj.contains("sizeMode")) {
+        QString mode;
+        if (!readString(_obj, "sizeMode", false, false, mode, where, _warnings)) {
+            ok = false;
+        }
+        else if (auto parsed = parseSizeMode(mode)) {
+            st.sizeMode = parsed.value();
+        }
+        else {
+            warnInvalidValue(where, "sizeMode", { "size", "scale" }, _warnings);
+            ok = false;
+        }
     }
-    else {
-        ok = readDouble(_obj, "scale", true, st.scale, where, _warnings) and ok;
-    }
-    ok = readDouble(_obj, "rotation", true, st.rotation, where, _warnings) and ok;
-    ok = readDouble(_obj, "opacity", true, st.opacity, where, _warnings) and ok;
+
+    // if (st.sizeMode == SizeMode::Size) {
+    //     ok = readDouble(_obj, "width", false, st.width, where, _warnings) and ok;
+    //     ok = readDouble(_obj, "height", false, st.height, where, _warnings) and ok;
+    // }
+    // else {
+    //     ok = readDouble(_obj, "scale", false, st.scale, where, _warnings) and ok;
+    // }
+
+    // ok = readDouble(_obj, "rotation", false, st.rotation, where, _warnings) and ok;
+    // ok = readDouble(_obj, "opacity", false, st.opacity, where, _warnings) and ok;
 
     if (!ok)
         return std::nullopt;
