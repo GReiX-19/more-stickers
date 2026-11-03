@@ -11,7 +11,6 @@
 | Key | Type | Required | Default | Notes |
 | :--- | :--- | :--- | :--- | :--- |
 | `id` | string | yes | none | non-empty, unique in the file |
-| `name` | string | no | `""` | grid label only |
 | `source` | string | yes | none | non-empty, relative to the stickers folder |
 | `enabled` | bool | no | `true` |
 | `monitor` | string | no | first screen | named but not connected means hidden, not an error |

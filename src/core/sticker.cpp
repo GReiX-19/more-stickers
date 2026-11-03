@@ -86,6 +86,20 @@ static bool readDouble(const QJsonObject& _obj, const QString& _key, bool _requi
 
     return true;
 }
+static bool readBool(const QJsonObject& _obj, const QString& _key, bool _required,
+    bool& _out, const QString& _where, QList<Warning>& _warnings) {
+    if (auto isKey = isContainedKey(_obj, _key, _required, _where, _warnings))
+        return isKey.value();
+
+    auto val = _obj.value(_key);
+    if (!val.isBool()) {
+        warnWrongType(_where, _key, "bool", val, _warnings);
+        return false;
+    }
+    _out = val.toBool();
+
+    return true;
+}
 
 std::optional<Sticker> parseSticker(const QJsonObject& _obj, int _index, QList<Warning>& _warnings) {
     Sticker st{};
@@ -97,8 +111,20 @@ std::optional<Sticker> parseSticker(const QJsonObject& _obj, int _index, QList<W
     if (ok) where += " (id: \"" + st.id + "\")";
 
     ok = readString(_obj, "source", true, true, st.source, where, _warnings) and ok;
+    ok = readBool(_obj, "enabled", true, st.enabled, where, _warnings) and ok;
+    //ok = readString(_obj, "monitor", true, false, st.monitor, where, _warnings) and ok;
     ok = readDouble(_obj, "x", true, st.x, where, _warnings) and ok;
     ok = readDouble(_obj, "y", true, st.y, where, _warnings) and ok;
+    //ok = readString(_obj, "sizeMode", true, false, st.sizeMode, where, _warnings) and ok;
+    if (st.sizeMode == SizeMode::Size) {
+        ok = readDouble(_obj, "width", true, st.width, where, _warnings) and ok;
+        ok = readDouble(_obj, "height", true, st.height, where, _warnings) and ok;
+    }
+    else {
+        ok = readDouble(_obj, "scale", true, st.scale, where, _warnings) and ok;
+    }
+    ok = readDouble(_obj, "rotation", true, st.rotation, where, _warnings) and ok;
+    ok = readDouble(_obj, "opacity", true, st.opacity, where, _warnings) and ok;
 
     if (!ok)
         return std::nullopt;
