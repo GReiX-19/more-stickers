@@ -13,14 +13,6 @@ static QString typeToString(QJsonValue::Type _type) {
     default: return QString();
     }
 }
-static std::optional<SizeMode> parseSizeMode(const QString& _mode) {
-    if (_mode == "size")
-        return SizeMode::Size;
-    else if (_mode == "scale")
-        return SizeMode::Scale;
-
-    return std::nullopt;
-}
 static void warnMissing(const QString& _where, const QString& _key, QList<Warning>& _warnings) {
     _warnings.append(
         Warning{
@@ -91,6 +83,14 @@ static std::optional<bool> isContainedKey(const QJsonObject& _obj, const QString
         else
             return true;
     }
+    return std::nullopt;
+}
+static std::optional<SizeMode> parseSizeMode(const QString& _mode) {
+    if (_mode == "size")
+        return SizeMode::Size;
+    else if (_mode == "scale")
+        return SizeMode::Scale;
+
     return std::nullopt;
 }
 

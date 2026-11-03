@@ -137,8 +137,18 @@ private slots:
         auto st = parseSticker(obj, 0, lw);
 
         QCOMPARE(st.has_value(), true);
+        QCOMPARE(st->opacity, 1);
         QCOMPARE(lw.size(), 1);
         QCOMPARE(lw[0].kind, Warning::Kind::Clamped);
+    }
+    void unknownKeyStays() {
+        QJsonObject obj{ { "id", "a" },{ "source", "a.png" },{ "depth", 20 } };
+        QList<Warning> lw;
+        auto st = parseSticker(obj, 0, lw);
+
+        QCOMPARE(st.has_value(), true);
+        QCOMPARE(lw.size(), 0);
+        QCOMPARE(st->raw.contains("depth"), true);
     }
 };
 
