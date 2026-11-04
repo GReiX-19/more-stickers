@@ -17,6 +17,7 @@ static void warnMissing(const QString& _where, const QString& _key, QList<Warnin
     _warnings.append(
         Warning{
             _where,
+            _key,
             { ": \"" + _key + "\" is a required value - sticker skipped" },
             Warning::Kind::Missing
         }
@@ -27,6 +28,7 @@ static void warnWrongType(const QString& _where, const QString& _key, const QStr
     _warnings.append(
         Warning{
             _where,
+            _key,
             { ": \"" + _key + "\" expected " + _expected + ", found " + typeToString(_val.type()) + " \"" +
             _val.toVariant().toString() + "\" - sticker skipped" },
             Warning::Kind::WrongType
@@ -37,6 +39,7 @@ static void warnEmpty(const QString& _where, const QString& _key, QList<Warning>
     _warnings.append(
         Warning{
             _where,
+            _key,
             { ": \"" + _key + "\" must not be empty - sticker skipped" },
             Warning::Kind::Empty
         }
@@ -50,6 +53,7 @@ static void warnInvalidValue(const QString& _where, const QString& _key, const Q
     _warnings.append(
         Warning{
             _where,
+            _key,
             { ": \"" + _key + "\" must be only { " + alvals + "} - sticker skipped" },
             Warning::Kind::InvalidValue
         }
@@ -59,6 +63,7 @@ static void warnOutOfRange(const QString& _where, const QString& _key, QList<War
     _warnings.append(
         Warning{
             _where,
+            _key,
             { ": \"" + _key + "\" is out of range - sticker skipped" },
             Warning::Kind::OutOfRange
         }
@@ -68,6 +73,7 @@ static void warnClamped(const QString& _where, const QString& _key, const double
     _warnings.append(
         Warning{
             _where,
+            _key,
             { ": \"" + _key + "\" = " + QString::number(_val) + " was clamped (0..1)" },
             Warning::Kind::Clamped
         }

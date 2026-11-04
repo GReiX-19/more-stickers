@@ -35,6 +35,7 @@ struct Warning {
         OutOfRange,
     };
     QString where;
+    QString key;
     QString message;
     Kind kind;
 };

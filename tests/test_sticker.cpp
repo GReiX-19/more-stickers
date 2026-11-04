@@ -24,6 +24,7 @@ private slots:
 
         QCOMPARE(st.has_value(), false);
         QCOMPARE(lw.size(), 1);
+        QCOMPARE(lw[0].key, "id");
         QCOMPARE(lw[0].kind, Warning::Kind::Missing);
     }
     void wrongType() {
@@ -33,7 +34,9 @@ private slots:
 
         QCOMPARE(st.has_value(), false);
         QCOMPARE(lw.size(), 2);
+        QCOMPARE(lw[0].key, "id");
         QCOMPARE(lw[0].kind, Warning::Kind::WrongType);
+        QCOMPARE(lw[1].key, "x");
         QCOMPARE(lw[1].kind, Warning::Kind::WrongType);
     }
     void nonEmptyProps() {
@@ -43,7 +46,9 @@ private slots:
 
         QCOMPARE(st.has_value(), false);
         QCOMPARE(lw.size(), 2);
+        QCOMPARE(lw[0].key, "id");
         QCOMPARE(lw[0].kind, Warning::Kind::Empty);
+        QCOMPARE(lw[1].key, "source");
         QCOMPARE(lw[1].kind, Warning::Kind::Empty);
     }
     void optionalFields() {
@@ -101,6 +106,7 @@ private slots:
 
         QCOMPARE(st.has_value(), false);
         QCOMPARE(lw.size(), 1);
+        QCOMPARE(lw[0].key, "sizeMode");
         QCOMPARE(lw[0].kind, Warning::Kind::WrongType);
     }
     void invalidValueSizeMode() {
@@ -110,6 +116,7 @@ private slots:
 
         QCOMPARE(st.has_value(), false);
         QCOMPARE(lw.size(), 1);
+        QCOMPARE(lw[0].key, "sizeMode");
         QCOMPARE(lw[0].kind, Warning::Kind::InvalidValue);
     }
     void outOfRangeWidthHeight() {
@@ -119,7 +126,9 @@ private slots:
 
         QCOMPARE(st.has_value(), false);
         QCOMPARE(lw.size(), 2);
+        QCOMPARE(lw[0].key, "width");
         QCOMPARE(lw[0].kind, Warning::Kind::OutOfRange);
+        QCOMPARE(lw[1].key, "height");
         QCOMPARE(lw[1].kind, Warning::Kind::OutOfRange);
     }
     void outOfRangeScale() {
@@ -129,6 +138,7 @@ private slots:
 
         QCOMPARE(st.has_value(), false);
         QCOMPARE(lw.size(), 1);
+        QCOMPARE(lw[0].key, "scale");
         QCOMPARE(lw[0].kind, Warning::Kind::OutOfRange);
     }
     void clampOpacity() {
@@ -139,6 +149,7 @@ private slots:
         QCOMPARE(st.has_value(), true);
         QCOMPARE(st->opacity, 1);
         QCOMPARE(lw.size(), 1);
+        QCOMPARE(lw[0].key, "opacity");
         QCOMPARE(lw[0].kind, Warning::Kind::Clamped);
     }
     void unknownKeyStays() {
@@ -146,7 +157,7 @@ private slots:
         QList<Warning> lw;
         auto st = parseSticker(obj, 0, lw);
 
-        QCOMPARE(st.has_value(), true);
+        QVERIFY(st.has_value());
         QCOMPARE(lw.size(), 0);
         QCOMPARE(st->raw.contains("depth"), true);
     }
