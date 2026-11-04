@@ -39,27 +39,26 @@ namespace mrst {
         }
 
         if (st.sizeMode == SizeMode::Size) {
-            if (_obj.contains("width")) {
-                checkRange(_obj, "width", ok, st.width, where, _warnings);
-            }
-            if (_obj.contains("height")) {
-                checkRange(_obj, "height", ok, st.height, where, _warnings);
-            }
+            ok = readDouble(_obj, "width", FieldOption::Positive, st.width, where, _warnings) and ok;
+            ok = readDouble(_obj, "height", FieldOption::Positive, st.height, where, _warnings) and ok;
         }
         else {
-            if (_obj.contains("scale")) {
-                checkRange(_obj, "scale", ok, st.scale, where, _warnings);
-            }
+            ok = readDouble(_obj, "scale", FieldOption::Positive, st.scale, where, _warnings) and ok;
         }
 
         ok = readDouble(_obj, "rotation", FieldOption{}, st.rotation, where, _warnings) and ok;
 
         if (_obj.contains("opacity")) {
-            double clampedOpacity;
-            ok = readDouble(_obj, "opacity", FieldOption{}, clampedOpacity, where, _warnings) and ok;
-            if (clampedOpacity < 0 or clampedOpacity > 1) {
-                st.opacity = std::clamp(clampedOpacity, 0.0, 1.0);
-                warnClamped(where, "opacity", clampedOpacity, _warnings);
+            double opacity;
+            if (!readDouble(_obj, "opacity", FieldOption{}, opacity, where, _warnings)) {
+                ok = false;
+            }
+            else if (opacity < 0 or opacity > 1) {
+                st.opacity = std::clamp(opacity, 0.0, 1.0);
+                warnClamped(where, "opacity", opacity, _warnings);
+            }
+            else {
+                st.opacity = opacity;
             }
         }
 

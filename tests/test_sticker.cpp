@@ -122,7 +122,7 @@ private slots:
         QCOMPARE(lw[0].kind, Warning::Kind::InvalidValue);
     }
     void outOfRangeWidthHeight() {
-        QJsonObject obj{ { "id", "a" },{ "source", "a.png" },{ "width", -10 },{ "height", - 10 } };
+        QJsonObject obj{ { "id", "a" },{ "source", "a.png" },{ "width", -10 },{ "height", 0 } };
         QList<Warning> lw;
         auto st = parseSticker(obj, 0, lw);
 
@@ -148,11 +148,20 @@ private slots:
         QList<Warning> lw;
         auto st = parseSticker(obj, 0, lw);
 
-        QCOMPARE(st.has_value(), true);
+        QVERIFY(st.has_value());
         QCOMPARE(st->opacity, 1);
         QCOMPARE(lw.size(), 1);
         QCOMPARE(lw[0].key, "opacity");
         QCOMPARE(lw[0].kind, Warning::Kind::Clamped);
+    }
+    void correctOpacity() {
+        QJsonObject obj{ { "id", "a" },{ "source", "a.png" },{ "opacity", 0.5 } };
+        QList<Warning> lw;
+        auto st = parseSticker(obj, 0, lw);
+
+        QVERIFY(st.has_value());
+        QCOMPARE(lw.size(), 0);
+        QCOMPARE(st->opacity, 0.5);
     }
     void unknownKeyStays() {
         QJsonObject obj{ { "id", "a" },{ "source", "a.png" },{ "depth", 20 } };

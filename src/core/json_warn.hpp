@@ -1,12 +1,11 @@
 #pragma once
 
-class QString;
-template<typename T>
-class QList;
-class QJsonValue;
+#include <QJsonObject>
+#include <QList>
+#include <QString>
 
 namespace mrst {
-    class Warning;
+    struct Warning;
 
     void warnMissing(const QString& _where, const QString& _key, QList<Warning>& _warnings);
     void warnWrongType(const QString& _where, const QString& _key, const QString& _expected,

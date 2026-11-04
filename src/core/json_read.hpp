@@ -1,20 +1,12 @@
 #pragma once
 
-#include <QJsonValue>
-
-class QString;
-template<typename T>
-class QList;
-template<typename Enum>
-class QFlags;
-
-namespace std {
-    template<typename T>
-    class optional;
-}
+#include <QJsonObject>
+#include <QList>
+#include <QString>
+#include <optional>
 
 namespace mrst {
-    class Warning;
+    struct Warning;
     enum class SizeMode;
     enum class FieldOption;
     typedef QFlags<FieldOption> FieldOptions;
@@ -23,8 +15,6 @@ namespace mrst {
     std::optional<bool> isContainedKey(const QJsonObject& _obj, const QString& _key, FieldOptions _options,
         const QString& _where, QList<Warning>& _warnings);
     std::optional<SizeMode> parseSizeMode(const QString& _mode);
-    void checkRange(const QJsonObject& _obj, const QString& _key, bool& _ok,
-        double& _out, const QString& _where, QList<Warning>& _warnings);
 
     bool readString(const QJsonObject& _obj, const QString& _key, FieldOptions _options,
         QString& _out, const QString& _where, QList<Warning>& _warnings);

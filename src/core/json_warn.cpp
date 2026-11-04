@@ -54,7 +54,7 @@ namespace mrst {
             Warning{
                 _where,
                 _key,
-                { ": \"" + _key + "\" is out of range - sticker skipped" },
+                { ": \"" + _key + "\" must be greater than 0 - sticker skipped" },
                 Warning::Kind::OutOfRange
             }
         );

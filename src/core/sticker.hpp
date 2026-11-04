@@ -14,7 +14,8 @@ namespace mrst {
 
     enum class FieldOption {
         Required = 1 << 0,
-        NonEmpty = 1 << 1
+        NonEmpty = 1 << 1,
+        Positive = 1 << 2
     };
     Q_DECLARE_FLAGS(FieldOptions, FieldOption);
     Q_DECLARE_OPERATORS_FOR_FLAGS(FieldOptions);
