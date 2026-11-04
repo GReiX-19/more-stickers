@@ -1,6 +1,8 @@
 #include "sticker.hpp"
 #include <QtTest>
 
+using namespace mrst;
+
 class StickerTest : public QObject {
     Q_OBJECT;
 
