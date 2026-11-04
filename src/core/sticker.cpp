@@ -10,23 +10,23 @@ namespace mrst {
         QString where = "stickers[" + QString::number(_index) + "]";
         bool ok = true;
 
-        ok = readString(_obj, "id", true, true, st.id, where, _warnings) and ok;
+        ok = readString(_obj, "id", FieldOption::Required | FieldOption::NonEmpty, st.id, where, _warnings) and ok;
         if (ok) where += " (id: \"" + st.id + "\")";
 
-        ok = readString(_obj, "source", true, true, st.source, where, _warnings) and ok;
-        ok = readBool(_obj, "enabled", false, st.enabled, where, _warnings) and ok;
+        ok = readString(_obj, "source", FieldOption::Required | FieldOption::NonEmpty, st.source, where, _warnings) and ok;
+        ok = readBool(_obj, "enabled", FieldOption{}, st.enabled, where, _warnings) and ok;
 
         QString monitorName;
-        ok = readString(_obj, "monitor", false, false, monitorName, where, _warnings) and ok;
+        ok = readString(_obj, "monitor", FieldOption{}, monitorName, where, _warnings) and ok;
         if (!monitorName.isEmpty())
             st.monitor.emplace(monitorName);
 
-        ok = readDouble(_obj, "x", false, st.x, where, _warnings) and ok;
-        ok = readDouble(_obj, "y", false, st.y, where, _warnings) and ok;
+        ok = readDouble(_obj, "x", FieldOption{}, st.x, where, _warnings) and ok;
+        ok = readDouble(_obj, "y", FieldOption{}, st.y, where, _warnings) and ok;
 
         if (_obj.contains("sizeMode")) {
             QString mode;
-            if (!readString(_obj, "sizeMode", false, false, mode, where, _warnings)) {
+            if (!readString(_obj, "sizeMode", FieldOption{}, mode, where, _warnings)) {
                 ok = false;
             }
             else if (auto parsed = parseSizeMode(mode)) {
@@ -52,11 +52,11 @@ namespace mrst {
             }
         }
 
-        ok = readDouble(_obj, "rotation", false, st.rotation, where, _warnings) and ok;
+        ok = readDouble(_obj, "rotation", FieldOption{}, st.rotation, where, _warnings) and ok;
 
         if (_obj.contains("opacity")) {
             double clampedOpacity;
-            ok = readDouble(_obj, "opacity", false, clampedOpacity, where, _warnings) and ok;
+            ok = readDouble(_obj, "opacity", FieldOption{}, clampedOpacity, where, _warnings) and ok;
             if (clampedOpacity < 0 or clampedOpacity > 1) {
                 st.opacity = std::clamp(clampedOpacity, 0.0, 1.0);
                 warnClamped(where, "opacity", clampedOpacity, _warnings);

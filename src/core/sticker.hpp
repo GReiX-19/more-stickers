@@ -3,6 +3,7 @@
 #include <QJsonObject>
 #include <QList>
 #include <QString>
+#include <QFlags>
 #include <optional>
 
 namespace mrst {
@@ -10,6 +11,13 @@ namespace mrst {
         Size,
         Scale
     };
+
+    enum class FieldOption {
+        Required = 1 << 0,
+        NonEmpty = 1 << 1
+    };
+    Q_DECLARE_FLAGS(FieldOptions, FieldOption);
+    Q_DECLARE_OPERATORS_FOR_FLAGS(FieldOptions);
 
     struct Sticker {
         std::optional<QString> monitor;
