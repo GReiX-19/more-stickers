@@ -4,6 +4,17 @@
 #include <algorithm>
 
 namespace mrst {
+    namespace {
+        std::optional<SizeMode> parseSizeMode(const QString& _mode) {
+            if (_mode == "size")
+                return SizeMode::Size;
+            else if (_mode == "scale")
+                return SizeMode::Scale;
+
+            return std::nullopt;
+        }
+    }
+
     std::optional<Sticker> parseSticker(const QJsonObject& _obj, int _index, QList<Warning>& _warnings) {
         Sticker st{};
         st.raw = _obj;
@@ -19,7 +30,7 @@ namespace mrst {
         QString monitorName;
         ok = readString(_obj, "monitor", FieldOption{}, monitorName, where, _warnings) and ok;
         if (!monitorName.isEmpty())
-            st.monitor.emplace(monitorName);
+            st.monitor = monitorName;
 
         ok = readDouble(_obj, "x", FieldOption{}, st.x, where, _warnings) and ok;
         ok = readDouble(_obj, "y", FieldOption{}, st.y, where, _warnings) and ok;

@@ -1,8 +1,22 @@
 #include "json_warn.hpp"
-#include "json_read.hpp"
-#include "sticker.hpp"
+#include "Warning.hpp"
 
 namespace mrst {
+    namespace {
+        QString typeToString(QJsonValue::Type _type) {
+            switch (_type) {
+            case QJsonValue::Type::Array: return QString("array");
+            case QJsonValue::Type::Bool: return QString("bool");
+            case QJsonValue::Type::Double: return QString("number");
+            case QJsonValue::Type::Null: return QString("null");
+            case QJsonValue::Type::Object: return QString("object");
+            case QJsonValue::Type::String: return QString("string");
+            case QJsonValue::Type::Undefined: return QString("undefined");
+            default: return QString();
+            }
+        }
+    }
+
     void warnMissing(const QString& _where, const QString& _key, QList<Warning>& _warnings) {
         _warnings.append(
             Warning{
@@ -35,16 +49,14 @@ namespace mrst {
             }
         );
     }
-    void warnInvalidValue(const QString& _where, const QString& _key, const QList<QString>& _allowedValues,
+    void warnInvalidValue(const QString& _where, const QString& _key, const QStringList& _allowedValues,
         QList<Warning>& _warnings) {
-        QString alvals;
-        for (const auto val : _allowedValues)
-            alvals.append(val + " ");
+        QString alvals = _allowedValues.join(", ");
         _warnings.append(
             Warning{
                 _where,
                 _key,
-                { ": \"" + _key + "\" must be only { " + alvals + "} - sticker skipped" },
+                { ": \"" + _key + "\" must be only { " + alvals + " } - sticker skipped" },
                 Warning::Kind::InvalidValue
             }
         );

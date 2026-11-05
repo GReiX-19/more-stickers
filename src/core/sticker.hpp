@@ -3,7 +3,6 @@
 #include <QJsonObject>
 #include <QList>
 #include <QString>
-#include <QFlags>
 #include <optional>
 
 namespace mrst {
@@ -11,14 +10,6 @@ namespace mrst {
         Size,
         Scale
     };
-
-    enum class FieldOption {
-        Required = 1 << 0,
-        NonEmpty = 1 << 1,
-        Positive = 1 << 2
-    };
-    Q_DECLARE_FLAGS(FieldOptions, FieldOption);
-    Q_DECLARE_OPERATORS_FOR_FLAGS(FieldOptions);
 
     struct Sticker {
         std::optional<QString> monitor;
@@ -34,21 +25,7 @@ namespace mrst {
         bool enabled = true;
     };
 
-    struct Warning {
-        enum class Kind {
-            Missing,
-            WrongType,
-            Duplicate,
-            Clamped,
-            Empty,
-            InvalidValue,
-            OutOfRange,
-        };
-        QString where;
-        QString key;
-        QString message;
-        Kind kind;
-    };
+    struct Warning;
 
     std::optional<Sticker> parseSticker(const QJsonObject& _obj, int _index, QList<Warning>& _warnings);
 } // namespace mrst

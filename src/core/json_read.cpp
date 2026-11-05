@@ -1,39 +1,20 @@
 #include "json_read.hpp"
 #include "json_warn.hpp"
-#include "sticker.hpp"
 
 namespace mrst {
-    QString typeToString(QJsonValue::Type _type) {
-        switch (_type) {
-        case QJsonValue::Type::Array: return QString("array");
-        case QJsonValue::Type::Bool: return QString("bool");
-        case QJsonValue::Type::Double: return QString("number");
-        case QJsonValue::Type::Null: return QString("null");
-        case QJsonValue::Type::Object: return QString("object");
-        case QJsonValue::Type::String: return QString("string");
-        case QJsonValue::Type::Undefined: return QString("undefined");
-        default: return QString();
-        }
-    }
-    std::optional<bool> isContainedKey(const QJsonObject& _obj, const QString& _key, FieldOptions _options,
-        const QString& _where, QList<Warning>& _warnings) {
-        if (!_obj.contains(_key)) {
-            if (_options.testFlag(FieldOption::Required)) {
-                warnMissing(_where, _key, _warnings);
-                return false;
+    namespace {
+        std::optional<bool> isContainedKey(const QJsonObject& _obj, const QString& _key, FieldOptions _options,
+            const QString& _where, QList<Warning>& _warnings) {
+            if (!_obj.contains(_key)) {
+                if (_options.testFlag(FieldOption::Required)) {
+                    warnMissing(_where, _key, _warnings);
+                    return false;
+                }
+                else
+                    return true;
             }
-            else
-                return true;
+            return std::nullopt;
         }
-        return std::nullopt;
-    }
-    std::optional<SizeMode> parseSizeMode(const QString& _mode) {
-        if (_mode == "size")
-            return SizeMode::Size;
-        else if (_mode == "scale")
-            return SizeMode::Scale;
-
-        return std::nullopt;
     }
 
     bool readString(const QJsonObject& _obj, const QString& _key, FieldOptions _options,
@@ -51,8 +32,8 @@ namespace mrst {
             warnEmpty(_where, _key, _warnings);
             return false;
         }
-        
-        _out = val.toString();
+
+        _out = out;
         return true;
     }
     bool readDouble(const QJsonObject& _obj, const QString& _key, FieldOptions _options,
@@ -70,8 +51,8 @@ namespace mrst {
             warnOutOfRange(_where, _key, _warnings);
             return false;
         }
-        
-        _out = val.toDouble();
+
+        _out = out;
         return true;
     }
     bool readBool(const QJsonObject& _obj, const QString& _key, FieldOptions _options,

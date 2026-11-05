@@ -1,4 +1,5 @@
 #include "sticker.hpp"
+#include "Warning.hpp"
 #include <QtTest>
 
 using namespace mrst;
@@ -82,6 +83,16 @@ private slots:
         QCOMPARE(lw.size(), 0);
         QCOMPARE(st->enabled, false);
     }
+    void wrongTypeEnabled() {
+        QJsonObject obj{ { "id", "a" },{ "source", "a.png" },{ "enabled", "yes" } };
+        QList<Warning> lw;
+        auto st = parseSticker(obj, 0, lw);
+
+        QCOMPARE(st.has_value(), false);
+        QCOMPARE(lw.size(), 1);
+        QCOMPARE(lw[0].key, "enabled");
+        QCOMPARE(lw[0].kind, Warning::Kind::WrongType);
+    }
     void emptyMonitorName() {
         QJsonObject obj{ { "id", "a" },{ "source", "a.png" },{ "monitor", "" } };
         QList<Warning> lw;
@@ -89,8 +100,17 @@ private slots:
 
         QVERIFY(st.has_value());
         QCOMPARE(lw.size(), 0);
-        QCOMPARE(st->width, 200);
         QCOMPARE(st->monitor, std::nullopt);
+    }
+    void wrongTypeMonitor() {
+        QJsonObject obj{ { "id", "a" },{ "source", "a.png" },{ "monitor", 5 } };
+        QList<Warning> lw;
+        auto st = parseSticker(obj, 0, lw);
+
+        QCOMPARE(st.has_value(), false);
+        QCOMPARE(lw.size(), 1);
+        QCOMPARE(lw[0].key, "monitor");
+        QCOMPARE(lw[0].kind, Warning::Kind::WrongType);
     }
     void rightTypeSizeMode() {
         QJsonObject obj{ { "id", "a" },{ "source", "a.png" },{ "sizeMode", "scale" } };
@@ -121,6 +141,15 @@ private slots:
         QCOMPARE(lw[0].key, "sizeMode");
         QCOMPARE(lw[0].kind, Warning::Kind::InvalidValue);
     }
+    void skipWrongScaleIfSizeModeSize() {
+        QJsonObject obj{ { "id", "a" },{ "source", "a.png" },{ "scale", -3 } };
+        QList<Warning> lw;
+        auto st = parseSticker(obj, 0, lw);
+
+        QVERIFY(st.has_value());
+        QCOMPARE(lw.size(), 0);
+        QCOMPARE(st->sizeMode, SizeMode::Size);
+    }
     void outOfRangeWidthHeight() {
         QJsonObject obj{ { "id", "a" },{ "source", "a.png" },{ "width", -10 },{ "height", 0 } };
         QList<Warning> lw;
@@ -133,6 +162,16 @@ private slots:
         QCOMPARE(lw[1].key, "height");
         QCOMPARE(lw[1].kind, Warning::Kind::OutOfRange);
     }
+    void correctWidthHeight() {
+        QJsonObject obj{ { "id", "a" },{ "source", "a.png" },{ "width", 300 },{ "height", 400 } };
+        QList<Warning> lw;
+        auto st = parseSticker(obj, 0, lw);
+
+        QVERIFY(st.has_value());
+        QCOMPARE(lw.size(), 0);
+        QCOMPARE(st->width, 300);
+        QCOMPARE(st->height, 400);
+    }
     void outOfRangeScale() {
         QJsonObject obj{ { "id", "a" },{ "source", "a.png" },{ "sizeMode", "scale" },{ "scale", -10 } };
         QList<Warning> lw;
@@ -142,6 +181,28 @@ private slots:
         QCOMPARE(lw.size(), 1);
         QCOMPARE(lw[0].key, "scale");
         QCOMPARE(lw[0].kind, Warning::Kind::OutOfRange);
+    }
+    void wrongTypeSize() {
+        QJsonObject obj{ { "id", "a" },{ "source", "a.png" },{ "width", "wide" } };
+        QList<Warning> lw;
+        auto st = parseSticker(obj, 0, lw);
+
+        QCOMPARE(st.has_value(), false);
+        QCOMPARE(lw.size(), 1);
+        QCOMPARE(lw[0].key, "width");
+        QCOMPARE(lw[0].kind, Warning::Kind::WrongType);
+    }
+    void correctScaleAndDefaultSizes() {
+        QJsonObject obj{ { "id", "a" },{ "source", "a.png" },{ "sizeMode", "scale" },{ "scale", 2 },
+            { "width", 500 }, { "height", 150 } };
+        QList<Warning> lw;
+        auto st = parseSticker(obj, 0, lw);
+
+        QVERIFY(st.has_value());
+        QCOMPARE(lw.size(), 0);
+        QCOMPARE(st->scale, 2);
+        QCOMPARE(st->width, 200);
+        QCOMPARE(st->height, 200);
     }
     void clampOpacity() {
         QJsonObject obj{ { "id", "a" },{ "source", "a.png" },{ "opacity", 20 } };
@@ -162,6 +223,25 @@ private slots:
         QVERIFY(st.has_value());
         QCOMPARE(lw.size(), 0);
         QCOMPARE(st->opacity, 0.5);
+    }
+    void wrongTypeOpacity() {
+        QJsonObject obj{ { "id", "a" },{ "source", "a.png" },{ "opacity", "high" } };
+        QList<Warning> lw;
+        auto st = parseSticker(obj, 0, lw);
+
+        QCOMPARE(st.has_value(), false);
+        QCOMPARE(lw.size(), 1);
+        QCOMPARE(lw[0].key, "opacity");
+        QCOMPARE(lw[0].kind, Warning::Kind::WrongType);
+    }
+    void correctRotation() {
+        QJsonObject obj{ { "id", "a" },{ "source", "a.png" },{ "rotation", 45 } };
+        QList<Warning> lw;
+        auto st = parseSticker(obj, 0, lw);
+
+        QVERIFY(st.has_value());
+        QCOMPARE(lw.size(), 0);
+        QCOMPARE(st->rotation, 45);
     }
     void unknownKeyStays() {
         QJsonObject obj{ { "id", "a" },{ "source", "a.png" },{ "depth", 20 } };
