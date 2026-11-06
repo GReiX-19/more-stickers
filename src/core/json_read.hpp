@@ -13,8 +13,8 @@ namespace mrst {
         NonEmpty = 1 << 1,
         Positive = 1 << 2
     };
-    Q_DECLARE_FLAGS(FieldOptions, FieldOption);
-    Q_DECLARE_OPERATORS_FOR_FLAGS(FieldOptions);
+    Q_DECLARE_FLAGS(FieldOptions, FieldOption)
+    Q_DECLARE_OPERATORS_FOR_FLAGS(FieldOptions)
 
     bool readString(const QJsonObject& _obj, const QString& _key, FieldOptions _options,
         QString& _out, const QString& _where, QList<Warning>& _warnings);

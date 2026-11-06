@@ -25,19 +25,19 @@ namespace mrst {
         if (ok) where += " (id: \"" + st.id + "\")";
 
         ok = readString(_obj, "source", FieldOption::Required | FieldOption::NonEmpty, st.source, where, _warnings) and ok;
-        ok = readBool(_obj, "enabled", FieldOption{}, st.enabled, where, _warnings) and ok;
+        ok = readBool(_obj, "enabled", FieldOptions{}, st.enabled, where, _warnings) and ok;
 
         QString monitorName;
-        ok = readString(_obj, "monitor", FieldOption{}, monitorName, where, _warnings) and ok;
+        ok = readString(_obj, "monitor", FieldOptions{}, monitorName, where, _warnings) and ok;
         if (!monitorName.isEmpty())
             st.monitor = monitorName;
 
-        ok = readDouble(_obj, "x", FieldOption{}, st.x, where, _warnings) and ok;
-        ok = readDouble(_obj, "y", FieldOption{}, st.y, where, _warnings) and ok;
+        ok = readDouble(_obj, "x", FieldOptions{}, st.x, where, _warnings) and ok;
+        ok = readDouble(_obj, "y", FieldOptions{}, st.y, where, _warnings) and ok;
 
         if (_obj.contains("sizeMode")) {
             QString mode;
-            if (!readString(_obj, "sizeMode", FieldOption{}, mode, where, _warnings)) {
+            if (!readString(_obj, "sizeMode", FieldOptions{}, mode, where, _warnings)) {
                 ok = false;
             }
             else if (auto parsed = parseSizeMode(mode)) {
@@ -57,11 +57,11 @@ namespace mrst {
             ok = readDouble(_obj, "scale", FieldOption::Positive, st.scale, where, _warnings) and ok;
         }
 
-        ok = readDouble(_obj, "rotation", FieldOption{}, st.rotation, where, _warnings) and ok;
+        ok = readDouble(_obj, "rotation", FieldOptions{}, st.rotation, where, _warnings) and ok;
 
         if (_obj.contains("opacity")) {
             double opacity;
-            if (!readDouble(_obj, "opacity", FieldOption{}, opacity, where, _warnings)) {
+            if (!readDouble(_obj, "opacity", FieldOptions{}, opacity, where, _warnings)) {
                 ok = false;
             }
             else if (opacity < 0 or opacity > 1) {
