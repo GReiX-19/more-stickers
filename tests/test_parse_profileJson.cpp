@@ -42,6 +42,28 @@ private slots:
         QCOMPARE(lw[0].kind, Warning::Kind::InvalidValue);
         QCOMPARE(lw[0].effect, WarningEffect::FileRejected);
     }
+    void doubleVersion() {
+        QJsonObject obj{ { "schemaVersion", 2.5 } };
+        QList<Warning> lw;
+        auto p = parseProfile(obj, lw);
+
+        QCOMPARE(p.has_value(), false);
+        QCOMPARE(lw.size(), 1);
+        QCOMPARE(lw[0].key, "schemaVersion");
+        QCOMPARE(lw[0].kind, Warning::Kind::WrongType);
+        QCOMPARE(lw[0].effect, WarningEffect::FileRejected);
+    }
+    void wrongTypeName() {
+        QJsonObject obj{ { "schemaVersion", 1 },{ "name", 1 } };
+        QList<Warning> lw;
+        auto p = parseProfile(obj, lw);
+
+        QCOMPARE(p.has_value(), false);
+        QCOMPARE(lw.size(), 1);
+        QCOMPARE(lw[0].key, "name");
+        QCOMPARE(lw[0].kind, Warning::Kind::WrongType);
+        QCOMPARE(lw[0].effect, WarningEffect::FileRejected);
+    }
     void missingSticker() {
         QJsonObject obj{ { "schemaVersion", 1 } };
         QList<Warning> lw;
@@ -51,6 +73,17 @@ private slots:
         QCOMPARE(lw.size(), 1);
         QCOMPARE(lw[0].key, "stickers");
         QCOMPARE(lw[0].kind, Warning::Kind::Missing);
+        QCOMPARE(lw[0].effect, WarningEffect::FileRejected);
+    }
+    void wrongTypeStickers() {
+        QJsonObject obj{ { "schemaVersion", 1 },{ "stickers", "x" } };
+        QList<Warning> lw;
+        auto p = parseProfile(obj, lw);
+
+        QCOMPARE(p.has_value(), false);
+        QCOMPARE(lw.size(), 1);
+        QCOMPARE(lw[0].key, "stickers");
+        QCOMPARE(lw[0].kind, Warning::Kind::WrongType);
         QCOMPARE(lw[0].effect, WarningEffect::FileRejected);
     }
     void nonObjectStickers() {
@@ -65,6 +98,14 @@ private slots:
         QCOMPARE(lw[0].key, "");
         QCOMPARE(lw[0].kind, Warning::Kind::WrongType);
         QCOMPARE(lw[0].effect, WarningEffect::StickerSkipped);
+    }
+    void emptyStickers() {
+        QJsonObject obj{ { "schemaVersion", 1 },{ "stickers", QJsonArray{} } };
+        QList<Warning> lw;
+        auto p = parseProfile(obj, lw);
+
+        QVERIFY(p.has_value());
+        QCOMPARE(lw.size(), 0);
     }
     void duplicateId() {
         QJsonObject obj{ { "schemaVersion", 1 },
@@ -104,6 +145,16 @@ private slots:
         QCOMPARE(lw[0].key, "source");
         QCOMPARE(lw[0].kind, Warning::Kind::WrongType);
         QCOMPARE(lw[0].effect, WarningEffect::StickerSkipped);
+    }
+    void unknownKey() {
+        QJsonObject obj{ { "schemaVersion", 1 },{ "path", "some path" },
+            { "stickers", QJsonArray{ QJsonObject{ { "id", "a" },{ "source", "a.png" } } } } };
+        QList<Warning> lw;
+        auto p = parseProfile(obj, lw);
+
+        QVERIFY(p.has_value());
+        QCOMPARE(lw.size(), 0);
+        QCOMPARE(p->raw, obj);
     }
 };
 

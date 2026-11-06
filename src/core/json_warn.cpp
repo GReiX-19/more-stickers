@@ -22,7 +22,7 @@ namespace mrst {
             Warning{
                 _ctx.where,
                 _key,
-                { ": \"" + _key + "\" is a required value" },
+                { "is a required value" },
                 Warning::Kind::Missing,
                 _ctx.effect
             }
@@ -33,7 +33,7 @@ namespace mrst {
             Warning{
                 _ctx.where,
                 _key,
-                { ": \"" + _key + "\" expected " + _expected + ", found " + typeToString(_val.type()) +
+                { "expected " + _expected + ", found " + typeToString(_val.type()) +
                     ((!_val.type() == QJsonValue::Type::Array or !_val.type() == QJsonValue::Type::Object) ?
                         " \"" + _val.toVariant().toString() + "\"" : "")
                 },
@@ -47,7 +47,7 @@ namespace mrst {
             Warning{
                 _ctx.where,
                 _key,
-                { ": \"" + _key + "\" must not be empty" },
+                { "must not be empty" },
                 Warning::Kind::Empty,
                 _ctx.effect
             }
@@ -59,18 +59,18 @@ namespace mrst {
             Warning{
                 _ctx.where,
                 _key,
-                { ": \"" + _key + "\" must be only { " + alvals + " }" },
+                { "must be only { " + alvals + " }" },
                 Warning::Kind::InvalidValue,
                 _ctx.effect
             }
         );
     }
-    void warnOutOfRange(const QString& _key, const ParseContext& _ctx) {
+    void warnOutOfRange(const QString& _key, const std::pair<QString, QString>& _ranges, const ParseContext& _ctx) {
         _ctx.warnings.append(
             Warning{
                 _ctx.where,
                 _key,
-                { ": \"" + _key + "\" must be greater than 0" },
+                { "is out of range, range ( " +  _ranges.first + ".." + _ranges.second + " )" },
                 Warning::Kind::OutOfRange,
                 _ctx.effect
             }
@@ -81,7 +81,7 @@ namespace mrst {
             Warning{
                 _ctx.where,
                 _key,
-                { ": \"" + _key + "\" = " + QString::number(_val) + " was clamped" },
+                { "= " + QString::number(_val) + " was clamped" },
                 Warning::Kind::Clamped,
                 _ctx.effect
             }
@@ -92,7 +92,7 @@ namespace mrst {
             Warning{
                 _ctx.where,
                 _key,
-                { ": \"" + _key + "\" is a duplicate" },
+                { "is a duplicate" },
                 Warning::Kind::Duplicate,
                 _ctx.effect
             }
@@ -104,7 +104,7 @@ namespace mrst {
             Warning{
                 _ctx.where,
                 {},
-                { ": " + _errorText + ", offset: " + QString::number(_offset) },
+                { _errorText + ", offset: " + QString::number(_offset) },
                 Warning::Kind::InvalidJson,
                 _ctx.effect
             }

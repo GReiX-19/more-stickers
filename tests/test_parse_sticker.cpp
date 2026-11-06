@@ -30,7 +30,7 @@ private slots:
         QCOMPARE(lw[0].key, "id");
         QCOMPARE(lw[0].kind, Warning::Kind::Missing);
         QCOMPARE(lw[0].effect, WarningEffect::StickerSkipped);
-        QCOMPARE(lw[0].message, ": \"id\" is a required value");
+        QCOMPARE(lw[0].message, "is a required value");
     }
     void wrongType() {
         QJsonObject obj{ { "id", 123 },{ "source", "a.png" },{ "x", "456" } };
