@@ -29,6 +29,8 @@ private slots:
         QCOMPARE(lw.size(), 1);
         QCOMPARE(lw[0].key, "id");
         QCOMPARE(lw[0].kind, Warning::Kind::Missing);
+        QCOMPARE(lw[0].effect, WarningEffect::StickerSkipped);
+        QCOMPARE(lw[0].message, ": \"id\" is a required value");
     }
     void wrongType() {
         QJsonObject obj{ { "id", 123 },{ "source", "a.png" },{ "x", "456" } };
@@ -39,8 +41,10 @@ private slots:
         QCOMPARE(lw.size(), 2);
         QCOMPARE(lw[0].key, "id");
         QCOMPARE(lw[0].kind, Warning::Kind::WrongType);
+        QCOMPARE(lw[0].effect, WarningEffect::StickerSkipped);
         QCOMPARE(lw[1].key, "x");
         QCOMPARE(lw[1].kind, Warning::Kind::WrongType);
+        QCOMPARE(lw[1].effect, WarningEffect::StickerSkipped);
     }
     void nonEmptyProps() {
         QJsonObject obj{ { "id", "" },{ "source", "" } };
@@ -51,8 +55,10 @@ private slots:
         QCOMPARE(lw.size(), 2);
         QCOMPARE(lw[0].key, "id");
         QCOMPARE(lw[0].kind, Warning::Kind::Empty);
+        QCOMPARE(lw[0].effect, WarningEffect::StickerSkipped);
         QCOMPARE(lw[1].key, "source");
         QCOMPARE(lw[1].kind, Warning::Kind::Empty);
+        QCOMPARE(lw[1].effect, WarningEffect::StickerSkipped);
     }
     void optionalFields() {
         QJsonObject obj{ { "id", "a" },{ "source", "a.png" } };
@@ -92,6 +98,7 @@ private slots:
         QCOMPARE(lw.size(), 1);
         QCOMPARE(lw[0].key, "enabled");
         QCOMPARE(lw[0].kind, Warning::Kind::WrongType);
+        QCOMPARE(lw[0].effect, WarningEffect::StickerSkipped);
     }
     void emptyMonitorName() {
         QJsonObject obj{ { "id", "a" },{ "source", "a.png" },{ "monitor", "" } };
@@ -111,6 +118,7 @@ private slots:
         QCOMPARE(lw.size(), 1);
         QCOMPARE(lw[0].key, "monitor");
         QCOMPARE(lw[0].kind, Warning::Kind::WrongType);
+        QCOMPARE(lw[0].effect, WarningEffect::StickerSkipped);
     }
     void rightTypeSizeMode() {
         QJsonObject obj{ { "id", "a" },{ "source", "a.png" },{ "sizeMode", "scale" } };
@@ -130,6 +138,7 @@ private slots:
         QCOMPARE(lw.size(), 1);
         QCOMPARE(lw[0].key, "sizeMode");
         QCOMPARE(lw[0].kind, Warning::Kind::WrongType);
+        QCOMPARE(lw[0].effect, WarningEffect::StickerSkipped);
     }
     void invalidValueSizeMode() {
         QJsonObject obj{ { "id", "a" },{ "source", "a.png" },{ "sizeMode", "huge" } };
@@ -140,6 +149,7 @@ private slots:
         QCOMPARE(lw.size(), 1);
         QCOMPARE(lw[0].key, "sizeMode");
         QCOMPARE(lw[0].kind, Warning::Kind::InvalidValue);
+        QCOMPARE(lw[0].effect, WarningEffect::StickerSkipped);
     }
     void skipWrongScaleIfSizeModeSize() {
         QJsonObject obj{ { "id", "a" },{ "source", "a.png" },{ "scale", -3 } };
@@ -159,8 +169,10 @@ private slots:
         QCOMPARE(lw.size(), 2);
         QCOMPARE(lw[0].key, "width");
         QCOMPARE(lw[0].kind, Warning::Kind::OutOfRange);
+        QCOMPARE(lw[0].effect, WarningEffect::StickerSkipped);
         QCOMPARE(lw[1].key, "height");
         QCOMPARE(lw[1].kind, Warning::Kind::OutOfRange);
+        QCOMPARE(lw[1].effect, WarningEffect::StickerSkipped);
     }
     void correctWidthHeight() {
         QJsonObject obj{ { "id", "a" },{ "source", "a.png" },{ "width", 300 },{ "height", 400 } };
@@ -181,6 +193,7 @@ private slots:
         QCOMPARE(lw.size(), 1);
         QCOMPARE(lw[0].key, "scale");
         QCOMPARE(lw[0].kind, Warning::Kind::OutOfRange);
+        QCOMPARE(lw[0].effect, WarningEffect::StickerSkipped);
     }
     void wrongTypeSize() {
         QJsonObject obj{ { "id", "a" },{ "source", "a.png" },{ "width", "wide" } };
@@ -191,6 +204,7 @@ private slots:
         QCOMPARE(lw.size(), 1);
         QCOMPARE(lw[0].key, "width");
         QCOMPARE(lw[0].kind, Warning::Kind::WrongType);
+        QCOMPARE(lw[0].effect, WarningEffect::StickerSkipped);
     }
     void correctScaleAndDefaultSizes() {
         QJsonObject obj{ { "id", "a" },{ "source", "a.png" },{ "sizeMode", "scale" },{ "scale", 2 },
@@ -214,6 +228,7 @@ private slots:
         QCOMPARE(lw.size(), 1);
         QCOMPARE(lw[0].key, "opacity");
         QCOMPARE(lw[0].kind, Warning::Kind::Clamped);
+        QCOMPARE(lw[0].effect, WarningEffect::ValueAdjusted);
     }
     void correctOpacity() {
         QJsonObject obj{ { "id", "a" },{ "source", "a.png" },{ "opacity", 0.5 } };
@@ -233,6 +248,7 @@ private slots:
         QCOMPARE(lw.size(), 1);
         QCOMPARE(lw[0].key, "opacity");
         QCOMPARE(lw[0].kind, Warning::Kind::WrongType);
+        QCOMPARE(lw[0].effect, WarningEffect::StickerSkipped);
     }
     void correctRotation() {
         QJsonObject obj{ { "id", "a" },{ "source", "a.png" },{ "rotation", 45 } };

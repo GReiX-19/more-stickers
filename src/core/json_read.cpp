@@ -1,5 +1,6 @@
 #include "json_read.hpp"
 #include "json_warn.hpp"
+#include "Warning.hpp"
 
 namespace mrst {
     namespace {
@@ -7,7 +8,7 @@ namespace mrst {
             const QString& _where, QList<Warning>& _warnings) {
             if (!_obj.contains(_key)) {
                 if (_options.testFlag(FieldOption::Required)) {
-                    warnMissing(_where, _key, _warnings);
+                    warnMissing(_where, _key, WarningEffect::StickerSkipped , _warnings);
                     return false;
                 }
                 else
@@ -24,12 +25,12 @@ namespace mrst {
 
         auto val = _obj.value(_key);
         if (!val.isString()) {
-            warnWrongType(_where, _key, "string", val, _warnings);
+            warnWrongType(_where, _key, "string", val, WarningEffect::StickerSkipped, _warnings);
             return false;
         }
         auto out = val.toString();
         if (_options.testFlag(FieldOption::NonEmpty) and out.isEmpty()) {
-            warnEmpty(_where, _key, _warnings);
+            warnEmpty(_where, _key, WarningEffect::StickerSkipped, _warnings);
             return false;
         }
 
@@ -43,12 +44,12 @@ namespace mrst {
 
         auto val = _obj.value(_key);
         if (!val.isDouble()) {
-            warnWrongType(_where, _key, "number", val, _warnings);
+            warnWrongType(_where, _key, "number", val, WarningEffect::StickerSkipped, _warnings);
             return false;
         }
         auto out = val.toDouble();
         if (_options.testFlag(FieldOption::Positive) and (out <= 0)) {
-            warnOutOfRange(_where, _key, _warnings);
+            warnOutOfRange(_where, _key, WarningEffect::StickerSkipped, _warnings);
             return false;
         }
 
@@ -62,7 +63,7 @@ namespace mrst {
 
         auto val = _obj.value(_key);
         if (!val.isBool()) {
-            warnWrongType(_where, _key, "bool", val, _warnings);
+            warnWrongType(_where, _key, "bool", val, WarningEffect::StickerSkipped, _warnings);
             return false;
         }
         _out = val.toBool();

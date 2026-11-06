@@ -3,6 +3,12 @@
 #include <QString>
 
 namespace mrst {
+
+    enum class WarningEffect {
+        StickerSkipped,
+        FileRejected,
+        ValueAdjusted
+    };
     struct Warning {
         enum class Kind {
             Missing,
@@ -17,5 +23,6 @@ namespace mrst {
         QString key;
         QString message;
         Kind kind;
+        WarningEffect effect;
     };
 }

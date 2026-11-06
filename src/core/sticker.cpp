@@ -1,6 +1,7 @@
 #include "sticker.hpp"
 #include "json_read.hpp"
 #include "json_warn.hpp"
+#include "Warning.hpp"
 #include <algorithm>
 
 namespace mrst {
@@ -44,7 +45,7 @@ namespace mrst {
                 st.sizeMode = parsed.value();
             }
             else {
-                warnInvalidValue(where, "sizeMode", { "size", "scale" }, _warnings);
+                warnInvalidValue(where, "sizeMode", { "size", "scale" }, WarningEffect::StickerSkipped, _warnings);
                 ok = false;
             }
         }
@@ -66,7 +67,7 @@ namespace mrst {
             }
             else if (opacity < 0 or opacity > 1) {
                 st.opacity = std::clamp(opacity, 0.0, 1.0);
-                warnClamped(where, "opacity", opacity, _warnings);
+                warnClamped(where, "opacity", opacity, WarningEffect::ValueAdjusted, _warnings);
             }
             else {
                 st.opacity = opacity;
