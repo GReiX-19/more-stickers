@@ -5,10 +5,10 @@
 namespace mrst {
     namespace {
         std::optional<bool> isContainedKey(const QJsonObject& _obj, const QString& _key, FieldOptions _options,
-            const QString& _where, QList<Warning>& _warnings) {
+            const ParseContext _ctx) {
             if (!_obj.contains(_key)) {
                 if (_options.testFlag(FieldOption::Required)) {
-                    warnMissing(_where, _key, WarningEffect::StickerSkipped , _warnings);
+                    warnMissing(_ctx.where, _key, _ctx.effect, _ctx.warnings);
                     return false;
                 }
                 else
@@ -19,18 +19,18 @@ namespace mrst {
     }
 
     bool readString(const QJsonObject& _obj, const QString& _key, FieldOptions _options,
-        QString& _out, const QString& _where, QList<Warning>& _warnings) {
-        if (auto isKey = isContainedKey(_obj, _key, _options, _where, _warnings))
+        QString& _out, const ParseContext _ctx) {
+        if (auto isKey = isContainedKey(_obj, _key, _options, _ctx))
             return isKey.value();
 
         auto val = _obj.value(_key);
         if (!val.isString()) {
-            warnWrongType(_where, _key, "string", val, WarningEffect::StickerSkipped, _warnings);
+            warnWrongType(_ctx.where, _key, "string", val, _ctx.effect, _ctx.warnings);
             return false;
         }
         auto out = val.toString();
         if (_options.testFlag(FieldOption::NonEmpty) and out.isEmpty()) {
-            warnEmpty(_where, _key, WarningEffect::StickerSkipped, _warnings);
+            warnEmpty(_ctx.where, _key, _ctx.effect, _ctx.warnings);
             return false;
         }
 
@@ -38,18 +38,18 @@ namespace mrst {
         return true;
     }
     bool readDouble(const QJsonObject& _obj, const QString& _key, FieldOptions _options,
-        double& _out, const QString& _where, QList<Warning>& _warnings) {
-        if (auto isKey = isContainedKey(_obj, _key, _options, _where, _warnings))
+        double& _out, const ParseContext _ctx) {
+        if (auto isKey = isContainedKey(_obj, _key, _options, _ctx))
             return isKey.value();
 
         auto val = _obj.value(_key);
         if (!val.isDouble()) {
-            warnWrongType(_where, _key, "number", val, WarningEffect::StickerSkipped, _warnings);
+            warnWrongType(_ctx.where, _key, "number", val, _ctx.effect, _ctx.warnings);
             return false;
         }
         auto out = val.toDouble();
         if (_options.testFlag(FieldOption::Positive) and (out <= 0)) {
-            warnOutOfRange(_where, _key, WarningEffect::StickerSkipped, _warnings);
+            warnOutOfRange(_ctx.where, _key, WarningEffect::StickerSkipped, _ctx.warnings);
             return false;
         }
 
@@ -57,13 +57,13 @@ namespace mrst {
         return true;
     }
     bool readBool(const QJsonObject& _obj, const QString& _key, FieldOptions _options,
-        bool& _out, const QString& _where, QList<Warning>& _warnings) {
-        if (auto isKey = isContainedKey(_obj, _key, _options, _where, _warnings))
+        bool& _out, const ParseContext _ctx) {
+        if (auto isKey = isContainedKey(_obj, _key, _options, _ctx))
             return isKey.value();
 
         auto val = _obj.value(_key);
         if (!val.isBool()) {
-            warnWrongType(_where, _key, "bool", val, WarningEffect::StickerSkipped, _warnings);
+            warnWrongType(_ctx.where, _key, "bool", val, WarningEffect::StickerSkipped, _ctx.warnings);
             return false;
         }
         _out = val.toBool();
