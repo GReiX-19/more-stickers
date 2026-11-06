@@ -45,7 +45,7 @@ namespace mrst {
                 st.sizeMode = parsed.value();
             }
             else {
-                warnInvalidValue(ctx.where, "sizeMode", { "size", "scale" }, WarningEffect::StickerSkipped, ctx.warnings);
+                warnInvalidValue("sizeMode", { "size", "scale" }, ctx);
                 ok = false;
             }
         }
@@ -67,7 +67,7 @@ namespace mrst {
             }
             else if (opacity < 0 or opacity > 1) {
                 st.opacity = std::clamp(opacity, 0.0, 1.0);
-                warnClamped(ctx.where, "opacity", opacity, WarningEffect::ValueAdjusted, ctx.warnings);
+                warnClamped("opacity", opacity, ParseContext{ ctx.where, WarningEffect::ValueAdjusted, _warnings });
             }
             else {
                 st.opacity = opacity;

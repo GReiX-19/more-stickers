@@ -10,7 +10,7 @@ namespace mrst {
             const ParseContext _ctx) {
             if (!_obj.contains(_key)) {
                 if (_options.testFlag(FieldOption::Required)) {
-                    warnMissing(_ctx.where, _key, _ctx.effect, _ctx.warnings);
+                    warnMissing(_key, _ctx);
                     return false;
                 }
                 else
@@ -27,12 +27,12 @@ namespace mrst {
 
         auto val = _obj.value(_key);
         if (!val.isString()) {
-            warnWrongType(_ctx.where, _key, "string", val, _ctx.effect, _ctx.warnings);
+            warnWrongType(_key, "string", val, _ctx);
             return false;
         }
         auto out = val.toString();
         if (_options.testFlag(FieldOption::NonEmpty) and out.isEmpty()) {
-            warnEmpty(_ctx.where, _key, _ctx.effect, _ctx.warnings);
+            warnEmpty(_key, _ctx);
             return false;
         }
 
@@ -46,12 +46,12 @@ namespace mrst {
 
         auto val = _obj.value(_key);
         if (!val.isDouble()) {
-            warnWrongType(_ctx.where, _key, "number", val, _ctx.effect, _ctx.warnings);
+            warnWrongType(_key, "number", val, _ctx);
             return false;
         }
         auto out = val.toDouble();
         if (_options.testFlag(FieldOption::Positive) and (out <= 0)) {
-            warnOutOfRange(_ctx.where, _key, _ctx.effect, _ctx.warnings);
+            warnOutOfRange(_key, _ctx);
             return false;
         }
 
@@ -65,7 +65,7 @@ namespace mrst {
 
         auto val = _obj.value(_key);
         if (!val.isBool()) {
-            warnWrongType(_ctx.where, _key, "bool", val, _ctx.effect, _ctx.warnings);
+            warnWrongType( _key, "bool", val, _ctx);
             return false;
         }
         
@@ -79,7 +79,7 @@ namespace mrst {
 
         auto val = _obj.value(_key);
         if (!val.isDouble()) {
-            warnWrongType(_ctx.where, _key, "integer", val, _ctx.effect, _ctx.warnings);
+            warnWrongType(_key, "integer", val, _ctx);
             return false;
         }
 
@@ -87,7 +87,7 @@ namespace mrst {
         const bool fitsInt = d >= std::numeric_limits<int>::min() and d <= std::numeric_limits<int>::max();
 
         if (!fitsInt or d != std::trunc(d)) {
-            warnWrongType(_ctx.where, _key, "integer", val, _ctx.effect, _ctx.warnings);
+            warnWrongType(_key, "integer", val, _ctx);
             return false;
         }
 

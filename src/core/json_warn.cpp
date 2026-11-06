@@ -17,74 +17,71 @@ namespace mrst {
         }
     }
 
-    void warnMissing(const QString& _where, const QString& _key, WarningEffect _effect, QList<Warning>& _warnings) {
-        _warnings.append(
+    void warnMissing(const QString& _key, const ParseContext& _ctx) {
+        _ctx.warnings.append(
             Warning{
-                _where,
+                _ctx.where,
                 _key,
                 { ": \"" + _key + "\" is a required value" },
                 Warning::Kind::Missing,
-                _effect
+                _ctx.effect
             }
         );
     }
-    void warnWrongType(const QString& _where, const QString& _key, const QString& _expected,
-        const QJsonValue& _val, WarningEffect _effect, QList<Warning>& _warnings) {
-        _warnings.append(
+    void warnWrongType(const QString& _key, const QString& _expected, const QJsonValue& _val, const ParseContext& _ctx) {
+        _ctx.warnings.append(
             Warning{
-                _where,
+                _ctx.where,
                 _key,
                 { ": \"" + _key + "\" expected " + _expected + ", found " + typeToString(_val.type()) + " \"" +
                 _val.toVariant().toString() + "\"" },
                 Warning::Kind::WrongType,
-                _effect
+                _ctx.effect
             }
         );
     }
-    void warnEmpty(const QString& _where, const QString& _key, WarningEffect _effect, QList<Warning>& _warnings) {
-        _warnings.append(
+    void warnEmpty(const QString& _key, const ParseContext& _ctx) {
+        _ctx.warnings.append(
             Warning{
-                _where,
+                _ctx.where,
                 _key,
                 { ": \"" + _key + "\" must not be empty" },
                 Warning::Kind::Empty,
-                _effect
+                _ctx.effect
             }
         );
     }
-    void warnInvalidValue(const QString& _where, const QString& _key, const QStringList& _allowedValues,
-        WarningEffect _effect, QList<Warning>& _warnings) {
+    void warnInvalidValue(const QString& _key, const QStringList& _allowedValues, const ParseContext& _ctx) {
         QString alvals = _allowedValues.join(", ");
-        _warnings.append(
+        _ctx.warnings.append(
             Warning{
-                _where,
+                _ctx.where,
                 _key,
                 { ": \"" + _key + "\" must be only { " + alvals + " }" },
                 Warning::Kind::InvalidValue,
-                _effect
+                _ctx.effect
             }
         );
     }
-    void warnOutOfRange(const QString& _where, const QString& _key, WarningEffect _effect, QList<Warning>& _warnings) {
-        _warnings.append(
+    void warnOutOfRange(const QString& _key, const ParseContext& _ctx) {
+        _ctx.warnings.append(
             Warning{
-                _where,
+                _ctx.where,
                 _key,
                 { ": \"" + _key + "\" must be greater than 0" },
                 Warning::Kind::OutOfRange,
-                _effect
+                _ctx.effect
             }
         );
     }
-    void warnClamped(const QString& _where, const QString& _key, const double& _val, WarningEffect _effect,
-        QList<Warning>& _warnings) {
-        _warnings.append(
+    void warnClamped(const QString& _key, const double& _val, const ParseContext& _ctx) {
+        _ctx.warnings.append(
             Warning{
-                _where,
+                _ctx.where,
                 _key,
                 { ": \"" + _key + "\" = " + QString::number(_val) + " was clamped" },
                 Warning::Kind::Clamped,
-                _effect
+                _ctx.effect
             }
         );
     }
