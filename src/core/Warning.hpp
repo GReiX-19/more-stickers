@@ -18,6 +18,7 @@ namespace mrst {
             Empty,
             InvalidValue,
             OutOfRange,
+            InvalidJson,
         };
         QString where;
         QString key;

@@ -27,5 +27,5 @@ namespace mrst {
 
     struct Warning;
 
-    std::optional<Sticker> parseSticker(const QJsonObject& _obj, int _index, QList<Warning>& _warnings);
+    std::optional<Sticker> parseSticker(const QJsonObject& _obj, qsizetype _index, QList<Warning>& _warnings);
 } // namespace mrst

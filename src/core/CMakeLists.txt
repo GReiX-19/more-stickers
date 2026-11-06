@@ -6,6 +6,8 @@ add_library(mrst_core STATIC
     json_warn.hpp
     json_warn.cpp
     Warning.hpp
+    profileJson.hpp
+    profileJson.cpp
 )
 
 target_include_directories(mrst_core PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

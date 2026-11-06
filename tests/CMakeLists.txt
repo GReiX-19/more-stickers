@@ -6,3 +6,4 @@ endfunction()
 
 add_mrst_test(test_parse_sticker)
 add_mrst_test(test_json_read)
+add_mrst_test(test_parse_profileJson)

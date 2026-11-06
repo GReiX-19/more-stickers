@@ -16,7 +16,7 @@ namespace mrst {
         }
     }
 
-    std::optional<Sticker> parseSticker(const QJsonObject& _obj, int _index, QList<Warning>& _warnings) {
+    std::optional<Sticker> parseSticker(const QJsonObject& _obj, qsizetype _index, QList<Warning>& _warnings) {
         Sticker st{};
         st.raw = _obj;
         ParseContext ctx{ { "stickers[" + QString::number(_index) + "]" }, WarningEffect::StickerSkipped, _warnings };

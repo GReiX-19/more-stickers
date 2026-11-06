@@ -33,8 +33,10 @@ namespace mrst {
             Warning{
                 _ctx.where,
                 _key,
-                { ": \"" + _key + "\" expected " + _expected + ", found " + typeToString(_val.type()) + " \"" +
-                _val.toVariant().toString() + "\"" },
+                { ": \"" + _key + "\" expected " + _expected + ", found " + typeToString(_val.type()) +
+                    ((!_val.type() == QJsonValue::Type::Array or !_val.type() == QJsonValue::Type::Object) ?
+                        " \"" + _val.toVariant().toString() + "\"" : "")
+                },
                 Warning::Kind::WrongType,
                 _ctx.effect
             }
@@ -81,6 +83,29 @@ namespace mrst {
                 _key,
                 { ": \"" + _key + "\" = " + QString::number(_val) + " was clamped" },
                 Warning::Kind::Clamped,
+                _ctx.effect
+            }
+        );
+    }
+    void warnDuplicate(const QString& _key, const ParseContext& _ctx) {
+        _ctx.warnings.append(
+            Warning{
+                _ctx.where,
+                _key,
+                { ": \"" + _key + "\" is a duplicate" },
+                Warning::Kind::Duplicate,
+                _ctx.effect
+            }
+        );
+    }
+    void warnInvalidJson(const QString& _errorText, const qsizetype _offset,
+        const ParseContext& _ctx) {
+        _ctx.warnings.append(
+            Warning{
+                _ctx.where,
+                {},
+                { ": " + _errorText + ", offset: " + QString::number(_offset) },
+                Warning::Kind::InvalidJson,
                 _ctx.effect
             }
         );
