@@ -1,6 +1,8 @@
 #include "json_read.hpp"
 #include "json_warn.hpp"
 #include "Warning.hpp"
+#include <cmath>
+#include <limits>
 
 namespace mrst {
     namespace {
@@ -49,7 +51,7 @@ namespace mrst {
         }
         auto out = val.toDouble();
         if (_options.testFlag(FieldOption::Positive) and (out <= 0)) {
-            warnOutOfRange(_ctx.where, _key, WarningEffect::StickerSkipped, _ctx.warnings);
+            warnOutOfRange(_ctx.where, _key, _ctx.effect, _ctx.warnings);
             return false;
         }
 
@@ -63,11 +65,33 @@ namespace mrst {
 
         auto val = _obj.value(_key);
         if (!val.isBool()) {
-            warnWrongType(_ctx.where, _key, "bool", val, WarningEffect::StickerSkipped, _ctx.warnings);
+            warnWrongType(_ctx.where, _key, "bool", val, _ctx.effect, _ctx.warnings);
             return false;
         }
+        
         _out = val.toBool();
+        return true;
+    }
+    bool readInt(const QJsonObject& _obj, const QString& _key, FieldOptions _options,
+        int& _out, const ParseContext& _ctx) {
+        if (auto isKey = isContainedKey(_obj, _key, _options, _ctx))
+            return isKey.value();
 
+        auto val = _obj.value(_key);
+        if (!val.isDouble()) {
+            warnWrongType(_ctx.where, _key, "integer", val, _ctx.effect, _ctx.warnings);
+            return false;
+        }
+
+        const double d = val.toDouble();
+        const bool fitsInt = d >= std::numeric_limits<int>::min() and d <= std::numeric_limits<int>::max();
+
+        if (!fitsInt or d != std::trunc(d)) {
+            warnWrongType(_ctx.where, _key, "integer", val, _ctx.effect, _ctx.warnings);
+            return false;
+        }
+
+        _out = static_cast<int>(d);
         return true;
     }
 }

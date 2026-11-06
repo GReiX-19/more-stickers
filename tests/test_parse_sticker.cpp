@@ -4,7 +4,7 @@
 
 using namespace mrst;
 
-class StickerTest : public QObject {
+class ParseStickerTest : public QObject {
     Q_OBJECT;
 
 private slots:
@@ -270,5 +270,5 @@ private slots:
     }
 };
 
-QTEST_APPLESS_MAIN(StickerTest)
-#include "test_sticker.moc"
+QTEST_APPLESS_MAIN(ParseStickerTest)
+#include "test_parse_sticker.moc"

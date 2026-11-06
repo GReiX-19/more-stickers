@@ -1,4 +1,8 @@
-add_executable(test_sticker test_sticker.cpp)
-target_link_libraries(test_sticker PRIVATE stickers_core Qt6::Test)
+function(add_mrst_test name)
+    add_executable(${name} ${name}.cpp)
+    target_link_libraries(${name} PRIVATE mrst_core Qt6::Test)
+    add_test(NAME ${name} COMMAND ${name})
+endfunction()
 
-add_test(NAME test_sticker COMMAND test_sticker)
+add_mrst_test(test_parse_sticker)
+add_mrst_test(test_json_read)

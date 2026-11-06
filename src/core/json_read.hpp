@@ -23,4 +23,6 @@ namespace mrst {
         double& _out, const ParseContext _ctx);
     bool readBool(const QJsonObject& _obj, const QString& _key, FieldOptions _options,
         bool& _out, const ParseContext _ctx);
+    bool readInt(const QJsonObject& _obj, const QString& _key, FieldOptions _options,
+        int& _out, const ParseContext& _ctx);
 }
