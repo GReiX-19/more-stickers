@@ -51,7 +51,7 @@ namespace mrst {
         }
         auto out = val.toDouble();
         if (_options.testFlag(FieldOption::Positive) and (out <= 0)) {
-            warnOutOfRange(_key, _ctx);
+            warnOutOfRange(_key, {"0", "+inf"}, _ctx);
             return false;
         }
 
