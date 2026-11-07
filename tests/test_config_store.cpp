@@ -11,10 +11,10 @@ using namespace mrst;
 class ConfigStoreTest : public QObject {
     Q_OBJECT;
 
-    static void writeFile(const QString& _path, const QByteArray& _content) {
+    static bool writeFile(const QString& _path, const QByteArray& _content) {
         QFile f(_path);
-        QVERIFY(f.open(QIODevice::WriteOnly | QIODevice::Truncate));
-        f.write(_content);
+        return f.open(QIODevice::WriteOnly | QIODevice::Truncate)
+            and f.write(_content) == _content.size();
     }
 
 private slots:
@@ -32,20 +32,20 @@ private slots:
         ConfigStore store{ path };
         QSignalSpy spy(&store, &ConfigStore::changed);
 
-        writeFile(path, good1);
+        QVERIFY(writeFile(path, good1));
         store.reload();
         QVERIFY(store.profile().has_value());
         QCOMPARE(store.profile()->name, "one");
         QCOMPARE(store.warnings().size(), 0);
 
-        writeFile(path, broken);
+        QVERIFY(writeFile(path, broken));
         store.reload();
         QVERIFY(store.profile().has_value());
         QCOMPARE(store.profile()->name, "one");
         QCOMPARE(store.warnings().size(), 1);
         QCOMPARE(store.warnings()[0].kind, Warning::Kind::InvalidJson);
 
-        writeFile(path, good2);
+        QVERIFY(writeFile(path, good2));
         store.reload();
         QVERIFY(store.profile().has_value());
         QCOMPARE(store.profile()->name, "two");
@@ -62,7 +62,7 @@ private slots:
         ConfigStore store{ path };
         QSignalSpy spy(&store, &ConfigStore::changed);
 
-        writeFile(path, broken);
+        QVERIFY(writeFile(path, broken));
         store.reload();
         QCOMPARE(store.profile().has_value(), false);
         QCOMPARE(store.warnings().size(), 1);
@@ -72,7 +72,9 @@ private slots:
         QCOMPARE(spy.count(), 1);
     }
     void missingFile() {
-        const QString path{"test_config/missing_config.json"};
+        QTemporaryDir dir;
+        QVERIFY(dir.isValid());
+        const QString path = dir.filePath("does_not_exist.json");
         ConfigStore store{ path };
         QSignalSpy spy(&store, &ConfigStore::changed);
 
@@ -83,6 +85,31 @@ private slots:
         QCOMPARE(store.warnings()[0].effect, WarningEffect::FileRejected);
 
         QCOMPARE(spy.count(), 1);
+    }
+    void deletedFile() {
+        QTemporaryDir dir;
+        QVERIFY(dir.isValid());
+        const QString path = dir.filePath("profile.json");
+        const QByteArray good = R"({ "schemaVersion": 1, "name": "one", "stickers": [] })";
+
+        ConfigStore store{ path };
+        QSignalSpy spy(&store, &ConfigStore::changed);
+
+        QVERIFY(writeFile(path, good));
+        store.reload();
+        QVERIFY(store.profile().has_value());
+        QCOMPARE(store.warnings().size(), 0);
+        QCOMPARE(store.profile()->schemaVersion, 1);
+        QCOMPARE(store.profile()->name, "one");
+
+        QVERIFY(QFile::remove(path));
+        store.reload();
+        QVERIFY(store.profile().has_value());
+        QCOMPARE(store.warnings().size(), 1);
+        QCOMPARE(store.warnings()[0].kind, Warning::Kind::Unreadable);
+        QCOMPARE(store.warnings()[0].effect, WarningEffect::FileRejected);
+
+        QCOMPARE(spy.count(), 2);
     }
 };
 

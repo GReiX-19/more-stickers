@@ -1,5 +1,5 @@
-
 #include "profileLoader.hpp"
+#include <QTemporaryDir>
 #include <QtTest>
 
 using namespace mrst;
@@ -23,7 +23,11 @@ private slots:
         QCOMPARE(res.profile->stickers[0].source, "someStickerPath");
     }
     void missingFile() {
-        auto res = loadProfileFile("test_configs/missing_config.json");
+        QTemporaryDir dir;
+        QVERIFY(dir.isValid());
+        const QString path = dir.filePath("does_not_exist.json");
+
+        auto res = loadProfileFile(path);
 
         QCOMPARE(res.profile.has_value(), false);
         QCOMPARE(res.warnings.size(), 1);
