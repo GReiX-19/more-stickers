@@ -4,7 +4,7 @@
 
 using namespace mrst;
 
-class JsonReadTest : public QObject {
+class ReadJsonTest : public QObject {
     Q_OBJECT;
 
 private slots:
@@ -94,5 +94,5 @@ private slots:
     }
 };
 
-QTEST_APPLESS_MAIN(JsonReadTest)
+QTEST_APPLESS_MAIN(ReadJsonTest)
 #include "test_json_read.moc"

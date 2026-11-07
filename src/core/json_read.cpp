@@ -94,4 +94,4 @@ namespace mrst {
         _out = static_cast<int>(d);
         return true;
     }
-}
+} //namespace mrst

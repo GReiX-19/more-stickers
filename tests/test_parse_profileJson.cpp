@@ -4,7 +4,7 @@
 
 using namespace mrst;
 
-class ParseProfileJson : public QObject {
+class ParseProfileJsonTest : public QObject {
     Q_OBJECT;
 
 private slots:
@@ -207,5 +207,5 @@ private slots:
     }
 };
 
-QTEST_APPLESS_MAIN(ParseProfileJson)
+QTEST_APPLESS_MAIN(ParseProfileJsonTest)
 #include "test_parse_profileJson.moc"
