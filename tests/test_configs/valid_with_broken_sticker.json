@@ -1,0 +1,13 @@
+{
+    "name": "validWithBrokenSticker",
+    "schemaVersion": 1,
+    "stickers": [
+        {
+            "id": "stickerId",
+            "source": "someStickerPath"
+        },
+        {
+            "source": "someStickerPath"
+        }
+    ]
+}

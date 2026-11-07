@@ -110,4 +110,15 @@ namespace mrst {
             }
         );
     }
-}
+    void warnUnreadable(const QString& _errorText, const ParseContext& _ctx) {
+        _ctx.warnings.append(
+            Warning{
+                _ctx.where,
+                {},
+                { _errorText },
+                Warning::Kind::Unreadable,
+                _ctx.effect
+            }
+        );
+    }
+} //namespace mrst

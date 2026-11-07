@@ -1,0 +1,10 @@
+{
+    "name": "validConfig",
+    "schemaVersion": 1,
+    "stickers": [
+        {
+            "id": "stickerId",
+            "source": "someStickerPath"
+        }
+    ]
+}

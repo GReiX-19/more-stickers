@@ -19,6 +19,7 @@ namespace mrst {
             InvalidValue,
             OutOfRange,
             InvalidJson,
+            Unreadable
         };
         QString where;
         QString key;
@@ -32,4 +33,4 @@ namespace mrst {
         WarningEffect effect;
         QList<Warning>& warnings;
     };
-}
+} //namespace mrst

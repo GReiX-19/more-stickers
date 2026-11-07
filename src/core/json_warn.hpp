@@ -17,4 +17,5 @@ namespace mrst {
     void warnClamped(const QString& _key, const double& _val, const ParseContext& _ctx);
     void warnDuplicate(const QString& _key, const ParseContext& _ctx);
     void warnInvalidJson(const QString& _errorText, const qsizetype _offset, const ParseContext& _ctx);
-}
+    void warnUnreadable(const QString& _errorText, const ParseContext& _ctx);
+} //namespace mrst

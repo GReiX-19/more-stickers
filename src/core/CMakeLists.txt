@@ -8,6 +8,10 @@ add_library(mrst_core STATIC
     Warning.hpp
     profileJson.hpp
     profileJson.cpp
+    profileLoader.hpp
+    profileLoader.cpp
+    ConfigStore.hpp
+    ConfigStore.cpp
 )
 
 target_include_directories(mrst_core PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
