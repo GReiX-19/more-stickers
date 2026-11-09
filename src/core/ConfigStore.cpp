@@ -15,4 +15,4 @@ namespace mrst {
 
         emit changed();
     }
-}
+} // namespace mrst

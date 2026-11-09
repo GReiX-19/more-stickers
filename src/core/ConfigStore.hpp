@@ -27,4 +27,4 @@ namespace mrst {
         std::optional<Profile> m_profile;
         QList<Warning> m_warnings;
     };
-} //namespace mrst
+} // namespace mrst

@@ -60,13 +60,17 @@ namespace mrst {
             const auto elem = arr[i];
             if (!elem.isObject()) {
                 warnWrongType("", "object", elem, stCtx);
+                prof.skipped.append({ i, elem });
                 continue;
             }
             auto st = parseSticker(elem.toObject(), i, _warnings);
-            if (!st)
+            if (!st) {
+                prof.skipped.append({ i, elem });
                 continue;
+            }
             if (seen.contains(st->id)) {
                 warnDuplicate("id", stCtx);
+                prof.skipped.append({ i,elem });
                 continue;
             }
             seen.insert(st->id);

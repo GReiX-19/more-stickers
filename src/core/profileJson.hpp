@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QJsonObject>
+#include <QJsonValue>
 #include <QList>
 #include <QString>
 #include <optional>
@@ -10,10 +11,16 @@ namespace mrst {
     struct Sticker;
     struct Warning;
 
+    struct SkippedEntry {
+        qsizetype index;
+        QJsonValue value;
+    };
+
     struct Profile {
         int schemaVersion = 0;
         QString name;
         QList<Sticker> stickers;
+        QList<SkippedEntry> skipped;
         QJsonObject raw;
     };
 
