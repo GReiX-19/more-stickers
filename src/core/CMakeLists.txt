@@ -14,6 +14,8 @@ add_library(mrst_core STATIC
     ConfigStore.cpp
     profileSaver.hpp
     profileSaver.cpp
+    appPaths.hpp
+    appPaths.cpp
 )
 
 target_include_directories(mrst_core PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

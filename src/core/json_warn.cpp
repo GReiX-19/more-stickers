@@ -34,7 +34,7 @@ namespace mrst {
                 _ctx.where,
                 _key,
                 { "expected " + _expected + ", found " + typeToString(_val.type()) +
-                    ((!_val.type() == QJsonValue::Type::Array or !_val.type() == QJsonValue::Type::Object) ?
+                    ((!(_val.type() == QJsonValue::Type::Array) or !(_val.type() == QJsonValue::Type::Object)) ?
                         " \"" + _val.toVariant().toString() + "\"" : "")
                 },
                 Warning::Kind::WrongType,
