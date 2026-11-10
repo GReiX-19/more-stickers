@@ -15,6 +15,16 @@ namespace mrst {
             }
             return QString{};
         }
+        QString valueSuffix(const QJsonValue& _val) {
+            switch (_val.type()) {
+                case QJsonValue::Type::String:
+                case QJsonValue::Type::Double:
+                case QJsonValue::Type::Bool:
+                    return " \"" + _val.toVariant().toString() + "\"";
+                default:
+                    return {};
+            }
+        }
     }
 
     void warnMissing(const QString& _key, const ParseContext& _ctx) {
@@ -33,10 +43,7 @@ namespace mrst {
             Warning{
                 _ctx.where,
                 _key,
-                { "expected " + _expected + ", found " + typeToString(_val.type()) +
-                    ((!(_val.type() == QJsonValue::Type::Array) or !(_val.type() == QJsonValue::Type::Object)) ?
-                        " \"" + _val.toVariant().toString() + "\"" : "")
-                },
+                { "expected " + _expected + ", found " + typeToString(_val.type()) + valueSuffix(_val) },
                 Warning::Kind::WrongType,
                 _ctx.effect
             }

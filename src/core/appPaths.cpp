@@ -1,5 +1,6 @@
 #include "appPaths.hpp"
 #include <QDir>
+#include <QStandardPaths>
 
 namespace mrst {
     QString AppPaths::profilesDir() const {
@@ -18,6 +19,9 @@ namespace mrst {
         return AppPaths{ { cbase + "/more-stickers" },{ dbase + "/more-stickers" } };
     }
     AppPaths defaultPaths() {
-        return { {},{} };
+        return pathsUnder(
+            QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation),
+            QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation)
+        );
     }
 } // namespace mrst

@@ -1,4 +1,5 @@
 #include "json_read.hpp"
+#include "json_warn.hpp"
 #include "Warning.hpp"
 #include <QtTest>
 
@@ -91,6 +92,90 @@ private slots:
         QCOMPARE(lw[0].key, "schemaVersion");
         QCOMPARE(lw[0].kind, Warning::Kind::WrongType);
         QCOMPARE(lw[0].effect, WarningEffect::FileRejected);
+    }
+        void wrongTypeMessageString() {
+        QJsonObject obj{ { "schemaVersion", "1" } };
+        QList<Warning> lw;
+        ParseContext ctx{ "profile", WarningEffect::FileRejected, lw };
+
+        int out = 0;
+        readInt(obj, "schemaVersion", FieldOption::Required, out, ctx);
+
+        QCOMPARE(lw.size(), 1);
+        QCOMPARE(lw[0].message, "expected integer, found string \"1\"");
+    }
+    void wrongTypeMessageNumber() {
+        QJsonObject obj{ { "schemaVersion", 1.5 } };
+        QList<Warning> lw;
+        ParseContext ctx{ "profile", WarningEffect::FileRejected, lw };
+
+        int out = 0;
+        readInt(obj, "schemaVersion", FieldOption::Required, out, ctx);
+
+        QCOMPARE(lw.size(), 1);
+        QCOMPARE(lw[0].message, "expected integer, found number \"1.5\"");
+    }
+    void wrongTypeMessageBool() {
+        QJsonObject obj{ { "schemaVersion", true } };
+        QList<Warning> lw;
+        ParseContext ctx{ "profile", WarningEffect::FileRejected, lw };
+
+        int out = 0;
+        readInt(obj, "schemaVersion", FieldOption::Required, out, ctx);
+
+        QCOMPARE(lw.size(), 1);
+        QCOMPARE(lw[0].message, "expected integer, found bool \"true\"");
+    }
+    void wrongTypeMessageNull() {
+        QJsonObject obj{ { "schemaVersion", QJsonValue::Null } };
+        QList<Warning> lw;
+        ParseContext ctx{ "profile", WarningEffect::FileRejected, lw };
+
+        int out = 0;
+        readInt(obj, "schemaVersion", FieldOption::Required, out, ctx);
+
+        QCOMPARE(lw.size(), 1);
+        QCOMPARE(lw[0].message, "expected integer, found null");
+    }
+    void wrongTypeMessageArray() {
+        QJsonObject obj{ { "schemaVersion", QJsonArray{ 1 } } };
+        QList<Warning> lw;
+        ParseContext ctx{ "profile", WarningEffect::FileRejected, lw };
+
+        int out = 0;
+        readInt(obj, "schemaVersion", FieldOption::Required, out, ctx);
+
+        QCOMPARE(lw.size(), 1);
+        QCOMPARE(lw[0].message, "expected integer, found array");
+    }
+    void wrongTypeMessageObject() {
+        QJsonObject obj{ { "schemaVersion", QJsonObject{ { "a", 1 } } } };
+        QList<Warning> lw;
+        ParseContext ctx{ "profile", WarningEffect::FileRejected, lw };
+
+        int out = 0;
+        readInt(obj, "schemaVersion", FieldOption::Required, out, ctx);
+
+        QCOMPARE(lw.size(), 1);
+        QCOMPARE(lw[0].message, "expected integer, found object");
+    }
+    void wrongTypeMessageUndefined() {
+        QList<Warning> lw;
+        ParseContext ctx{ "profile", WarningEffect::FileRejected, lw };
+
+        warnWrongType("", "object", QJsonValue{ QJsonValue::Undefined }, ctx);
+
+        QCOMPARE(lw.size(), 1);
+        QCOMPARE(lw[0].message, "expected object, found undefined");
+    }
+    void wrongTypeMessageDefaultValueIsNull() {
+        QList<Warning> lw;
+        ParseContext ctx{ "profile", WarningEffect::FileRejected, lw };
+
+        warnWrongType("", "object", QJsonValue{}, ctx);
+
+        QCOMPARE(lw.size(), 1);
+        QCOMPARE(lw[0].message, "expected object, found null");
     }
 };
 
