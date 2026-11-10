@@ -25,13 +25,13 @@
 
 ### Validation
 
-| Situation | Behaviour |
+| Situation | Behavior |
 | :--- | :--- |
 | Invalid JSON, wrong top-level shape, missing or unsupported `schemaVersion` | whole file rejected, keep last good state, warn |
 | Missing required field, or any wrong-typed field in a `sticker` | skip that sticker, warn |
-| Duplicate `id` | stip the later one, warn |
+| Duplicate `id` | skip the later one, warn |
 | `opacity` out of range | clamp, warn |
-| Uknown key | ignore, but preserve on write |
+| Unknown key | ignore, but preserve on write |
 | Missing optional field | use default |
 
 **Warning format:** `stickers[2] (id "cat"): "opacity" expected number, found string "high" - sticker skipped`
