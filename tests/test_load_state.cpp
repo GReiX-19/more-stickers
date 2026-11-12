@@ -1,4 +1,5 @@
 #include "stateLoader.hpp"
+#include "Warning.hpp"
 #include <QTemporaryDir>
 #include <QFile>
 #include <QIODevice>

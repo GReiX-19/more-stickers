@@ -1,4 +1,5 @@
 #include "ConfigStore.hpp"
+#include "Warning.hpp"
 #include <QFile>
 #include <QIODevice>
 #include <QTemporaryDir>

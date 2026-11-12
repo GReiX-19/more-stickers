@@ -1,4 +1,5 @@
 #include "profileLoader.hpp"
+#include "Warning.hpp"
 #include <QTemporaryDir>
 #include <QtTest>
 
