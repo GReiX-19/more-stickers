@@ -8,22 +8,23 @@
 #include <QJsonParseError>
 
 namespace mrst {
-    std::optional<QJsonObject> parseProfileJson(const QByteArray& _json, QList<Warning>& _warnings) {
+    std::optional<QJsonObject> parseJsonObject(const QByteArray& _json, const ParseContext& _ctx) {
         QJsonParseError err;
         const auto doc = QJsonDocument::fromJson(_json, &err);
         if (err.error != QJsonParseError::NoError) {
-            warnInvalidJson(err.errorString(), err.offset,
-                ParseContext{ "profile", WarningEffect::FileRejected, _warnings });
+            warnInvalidJson(err.errorString(), err.offset, _ctx);
             return std::nullopt;
         }
         if (!doc.isObject()) {
             warnWrongType("", "object",
-                doc.isArray() ? QJsonValue{ doc.array() } : QJsonValue{},
-                ParseContext{ "profile", WarningEffect::FileRejected, _warnings });
+                doc.isArray() ? QJsonValue{ doc.array() } : QJsonValue{}, _ctx);
             return std::nullopt;
         }
 
         return doc.object();
+    }
+    std::optional<QJsonObject> parseProfileJson(const QByteArray& _json, QList<Warning>& _warnings) {
+        return parseJsonObject(_json, ParseContext{ "profile", WarningEffect::FileRejected, _warnings });
     }
     std::optional<Profile> parseProfile(const QJsonObject& _obj, QList<Warning>& _warnings) {
         Profile prof{};

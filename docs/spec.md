@@ -21,7 +21,32 @@
 | `rotation` | number | no | `0` | degrees |
 | `opacity` | number | no | `1` | clamped to 0..1 with a warning | 
 
-**State file (proposed)**: `{ "schemaVersion": 1, "activeProfile": "profile.json" }`, with the filename relative to the profiles folder, written only by app.
+### State file
+
+| Key | Type | Required | Default |
+| :--- | :--- | :--- | :--- |
+| `schemaVersion` | integer | yes | none (must be `1`) |
+| `activeProfile` | string | yes | none |
+
+`activeProfile` must be a plain file name: non-empty, containing no `/`, and not exactly `.` or `..`. Valid: `work.json`, `.hidden.json`. Invalid: `../x.json`, `sub/x.json`, `/x.json`, `..`.
+
+**State file behaviors:**
+| Situation | Behavior |
+| :--- | :--- |
+| Absent | no active profile, no warnings |
+| Unreadable, invalid `activeProfile`, permissions denied, malformed JSON, bad schemaVersion | no state, appropriate warnings (when the configuration app is opened); overlay shows nothing, logs the problem |
+| Present | valid state, no warnings |
+| Unknown keys | ignored while parsing |
+| State valid, no profile | overlay shows nothing, logs the problem |
+
+**File layout:**  
+- config base - `$XDG_CONFIG_HOME` if `$XDG_CONFIG_HOME` else `~/.config`
+- data base - `$XDG_DATA_HOME` if `$XDG_DATA_HOME` else `~/.local/share`
+- config dir - config base + `/more-stickers`
+- data dir - data base + `/more-stickers`
+- profiles - config dir + `/profiles`
+- state file - config dir + `/state.json`
+- stickers folder - data dir + `/stickers`
 
 ### Validation
 
