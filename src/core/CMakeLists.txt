@@ -18,6 +18,9 @@ add_library(mrst_core STATIC
     appPaths.cpp
     state.hpp
     state.cpp
+    stateLoader.hpp
+    stateLoader.cpp
+    jsonObjectParser.hpp
 )
 
 target_include_directories(mrst_core PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

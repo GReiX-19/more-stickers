@@ -25,7 +25,6 @@ namespace mrst {
         QJsonObject raw;
     };
 
-    std::optional<QJsonObject> parseJsonObject(const QByteArray& _json, const ParseContext& _ctx);
     std::optional<QJsonObject> parseProfileJson(const QByteArray& _json, QList<Warning>& _warnings);
     std::optional<Profile> parseProfile(const QJsonObject& _obj, QList<Warning>& _warnings);
 } //namespace mrst

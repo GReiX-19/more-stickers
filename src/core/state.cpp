@@ -2,6 +2,7 @@
 #include "json_read.hpp"
 #include "json_warn.hpp"
 #include "Warning.hpp"
+#include "jsonObjectParser.hpp"
 
 namespace mrst {
     namespace {
@@ -10,6 +11,9 @@ namespace mrst {
         }
     }
 
+    std::optional<QJsonObject> parseStateJson(const QByteArray& _json, QList<Warning>& _warnings) {
+        return parseJsonObject(_json, ParseContext{ "state", WarningEffect::FileRejected, _warnings });
+    }
     std::optional<State> parseState(const QJsonObject& _obj, QList<Warning>& _warnings) {
         State state{};
         ParseContext ctx{ "state", WarningEffect::FileRejected, _warnings };

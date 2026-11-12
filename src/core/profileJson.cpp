@@ -2,27 +2,11 @@
 #include "Warning.hpp"
 #include "json_read.hpp"
 #include "json_warn.hpp"
-#include <QJsonArray>
-#include <QJsonDocument>
+#include "jsonObjectParser.hpp"
 #include <QSet>
-#include <QJsonParseError>
+#include <QJsonArray>
 
 namespace mrst {
-    std::optional<QJsonObject> parseJsonObject(const QByteArray& _json, const ParseContext& _ctx) {
-        QJsonParseError err;
-        const auto doc = QJsonDocument::fromJson(_json, &err);
-        if (err.error != QJsonParseError::NoError) {
-            warnInvalidJson(err.errorString(), err.offset, _ctx);
-            return std::nullopt;
-        }
-        if (!doc.isObject()) {
-            warnWrongType("", "object",
-                doc.isArray() ? QJsonValue{ doc.array() } : QJsonValue{}, _ctx);
-            return std::nullopt;
-        }
-
-        return doc.object();
-    }
     std::optional<QJsonObject> parseProfileJson(const QByteArray& _json, QList<Warning>& _warnings) {
         return parseJsonObject(_json, ParseContext{ "profile", WarningEffect::FileRejected, _warnings });
     }
