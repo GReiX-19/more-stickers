@@ -128,4 +128,15 @@ namespace mrst {
             }
         );
     }
+    void warnInvalidFileName(const QString& _key, const ParseContext& _ctx) {
+        _ctx.warnings.append(
+            Warning{
+                _ctx.where,
+                _key,
+                { "must be a plain file name (no '/', not '.' or '..')" },
+                Warning::Kind::InvalidValue,
+                _ctx.effect
+            }
+        );
+    }
 } //namespace mrst

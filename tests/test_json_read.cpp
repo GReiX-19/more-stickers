@@ -177,6 +177,19 @@ private slots:
         QCOMPARE(lw.size(), 1);
         QCOMPARE(lw[0].message, "expected object, found null");
     }
+    void invalidFileNameMessage() {
+        QList<Warning> lw;
+        ParseContext ctx{ "state", WarningEffect::FileRejected, lw };
+
+        warnInvalidFileName("activeProfile", ctx);
+
+        QCOMPARE(lw.size(), 1);
+        QCOMPARE(lw[0].where, "state");
+        QCOMPARE(lw[0].key, "activeProfile");
+        QCOMPARE(lw[0].kind, Warning::Kind::InvalidValue);
+        QCOMPARE(lw[0].effect, WarningEffect::FileRejected);
+        QCOMPARE(lw[0].message, "must be a plain file name (no '/', not '.' or '..')");
+    }
 };
 
 QTEST_APPLESS_MAIN(ReadJsonTest)
