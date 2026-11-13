@@ -21,7 +21,7 @@ private slots:
     void validStateFile() {
         QTemporaryDir dir;
         QVERIFY(dir.isValid());
-        const QString path = dir.filePath("state.json");
+        const QString path = dir.filePath("valid.json");
         const QByteArray text = R"({ "schemaVersion": 1, "activeProfile": "x.json" })";
         QVERIFY(writeFile(path, text));
 
@@ -43,9 +43,13 @@ private slots:
         QCOMPARE(res.warnings.size(), 0);
     }
     void emptyFile() {
-        const QString path = QFINDTESTDATA("test_configs/empty_config.json");
-        QVERIFY2(!path.isEmpty(), "fixture not found");
-        
+        QTemporaryDir dir;
+        QVERIFY(dir.isValid());
+        const QString path = dir.filePath("empty.json");
+        const QByteArray text = "";
+        QVERIFY(writeFile(path, text));
+
+        QVERIFY(QFile::exists(path));
         auto res = loadStateFile(path);
 
         QCOMPARE(res.state.has_value(), false);
@@ -57,7 +61,7 @@ private slots:
     void malformedJsonFile() {
         QTemporaryDir dir;
         QVERIFY(dir.isValid());
-        const QString path = dir.filePath("state.json");
+        const QString path = dir.filePath("malformed.json");
         const QByteArray text = R"({ "schemaVersion": })";
         QVERIFY(writeFile(path, text));
 
@@ -72,12 +76,11 @@ private slots:
     void existUnreadableFile() {
         QTemporaryDir dir;
         QVERIFY(dir.isValid());
-        const QString path = dir.filePath("state.json");
+        const QString path = dir.filePath("unreadable.json");
 
         const QByteArray text = R"({ "schemaVersion": 1, "activeProfile": "x.json" })";
         QVERIFY(writeFile(path, text));
-        QFile f(path);
-        QVERIFY(f.setPermissions(QFileDevice::Permissions{}));
+        QVERIFY(QFile::setPermissions(path, QFileDevice::Permissions{}));
         if (QFile(path).open(QIODevice::ReadOnly))
             QSKIP("permissions are not enforced here (running as root?)");
 
@@ -88,6 +91,22 @@ private slots:
         QCOMPARE(res.warnings[0].where, "state");
         QCOMPARE(res.warnings[0].kind, Warning::Kind::Unreadable);
         QCOMPARE(res.warnings[0].effect, WarningEffect::FileRejected);
+    }
+    void disallowedFolder() {
+        QTemporaryDir dir;
+        QVERIFY(dir.isValid());
+        const QString path = dir.filePath("valid.json");
+        const QByteArray text = R"({ "schemaVersion": 1, "activeProfile": "x.json" })";
+        QVERIFY(writeFile(path, text));
+
+        QVERIFY(QFile::setPermissions(dir.path(), QFileDevice::Permissions{}));
+        if (QFile(path).open(QIODevice::ReadOnly))
+            QSKIP("permissions are not enforced here (running as root?)");
+
+        auto res = loadStateFile(path);
+        
+        QCOMPARE(res.state.has_value(), false);
+        QCOMPARE(res.warnings.size(), 0);
     }
 };
 

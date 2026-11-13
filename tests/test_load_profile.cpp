@@ -1,6 +1,7 @@
 #include "profileLoader.hpp"
 #include "Warning.hpp"
 #include <QTemporaryDir>
+#include <QFile>
 #include <QtTest>
 
 using namespace mrst;
@@ -8,10 +9,20 @@ using namespace mrst;
 class LoadProfileTest : public QObject {
     Q_OBJECT;
 
+    static bool writeFile(const QString& _path, const QByteArray& _content) {
+        QFile f(_path);
+        return f.open(QIODevice::WriteOnly | QIODevice::Truncate)
+            and f.write(_content) == _content.size();
+    }
+
 private slots:
     void validFile() {
-        const QString path = QFINDTESTDATA("test_configs/valid_config.json");
-        QVERIFY2(!path.isEmpty(), "fixture not found");
+        QTemporaryDir dir;
+        QVERIFY(dir.isValid());
+        const QString path = dir.filePath("valid.json");
+        const QByteArray text = R"({ "name": "validConfig", "schemaVersion": 1, "stickers": [ { "id": "stickerId",
+            "source": "someStickerPath" } ] })";
+        QVERIFY(writeFile(path, text));
 
         auto res = loadProfileFile(path);
 
@@ -37,9 +48,13 @@ private slots:
         QCOMPARE(res.warnings[0].effect, WarningEffect::FileRejected);
     }
     void emptyFile() {
-        const QString path = QFINDTESTDATA("test_configs/empty_config.json");
-        QVERIFY2(!path.isEmpty(), "fixture not found");
-        
+        QTemporaryDir dir;
+        QVERIFY(dir.isValid());
+        const QString path = dir.filePath("empty.json");
+        const QByteArray text = "";
+        QVERIFY(writeFile(path, text));
+
+        QVERIFY(QFile::exists(path));
         auto res = loadProfileFile(path);
 
         QCOMPARE(res.profile.has_value(), false);
@@ -49,8 +64,12 @@ private slots:
         QCOMPARE(res.warnings[0].effect, WarningEffect::FileRejected);
     }
     void validProfileSkippedSticker() {
-        const QString path = QFINDTESTDATA("test_configs/valid_with_broken_sticker.json");
-        QVERIFY2(!path.isEmpty(), "fixture not found");
+        QTemporaryDir dir;
+        QVERIFY(dir.isValid());
+        const QString path = dir.filePath("valid_with_broken_sticker.json");
+        const QByteArray text = R"({ "name": "validWithBrokenSticker", "schemaVersion": 1, "stickers": [ {
+            "id": "stickerId", "source": "someStickerPath" },{ "source": "someStickerPath" } ] })";
+        QVERIFY(writeFile(path, text));
         
         auto res = loadProfileFile(path);
 

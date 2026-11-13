@@ -19,11 +19,6 @@ class SaveProfileTest : public QObject {
         return f.open(QIODevice::WriteOnly | QIODevice::Truncate)
             and f.write(_content) == _content.size();
     }
-    static QString copyFixture(const QTemporaryDir& _dir, const QString& _name) {
-        const QString src = QFINDTESTDATA("test_configs/" + _name);
-        const QString dst = _dir.filePath(_name);
-        return (!src.isEmpty() and QFile::copy(src, dst)) ? dst : QString{};
-    }
     static QJsonObject readJsonFile(const QString& _path) {
         QFile f(_path);
         if (!f.open(QIODevice::ReadOnly))
@@ -35,8 +30,10 @@ private slots:
     void loadSaveLoad() {
         QTemporaryDir dir;
         QVERIFY(dir.isValid());
-        const QString path = copyFixture(dir, "valid_config.json");
-        QVERIFY2(!path.isEmpty(), "fixture not found");
+        const QString path = dir.filePath("valid.json");
+        const QByteArray text = R"({ "name": "validConfig", "schemaVersion": 1, "stickers": [ { "id": "stickerId",
+            "source": "someStickerPath" } ] })";
+        QVERIFY(writeFile(path, text));
 
         auto res1 = loadProfileFile(path);
 
@@ -58,10 +55,8 @@ private slots:
         QTemporaryDir dir;
         QVERIFY(dir.isValid());
         const QString path = dir.filePath("profile.json");
-
         const QByteArray text =
             R"({ "schemaVersion": 1, "stickers": [ { "id": "a", "source": "a.png", "option": "yes" } ] })";
-
         QVERIFY(writeFile(path, text));
 
         auto res1 = loadProfileFile(path);
@@ -82,8 +77,10 @@ private slots:
     void skippedStickerStays() {
         QTemporaryDir dir;
         QVERIFY(dir.isValid());
-        const QString path = copyFixture(dir, "valid_with_broken_sticker.json");
-        QVERIFY2(!path.isEmpty(), "fixture not found");
+        const QString path = dir.filePath("valid_with_broken_sticker.json");
+        const QByteArray text = R"({ "name": "validWithBrokenSticker", "schemaVersion": 1, "stickers": [ {
+            "id": "stickerId", "source": "someStickerPath" },{ "source": "someStickerPath" } ] })";
+        QVERIFY(writeFile(path, text));
 
         auto res1 = loadProfileFile(path);
 
@@ -105,9 +102,7 @@ private slots:
         QTemporaryDir dir;
         QVERIFY(dir.isValid());
         const QString path = dir.filePath("profile.json");
-
         const QByteArray text = R"({ "schemaVersion": 1, "option": "yes", "stickers": [] })";
-
         QVERIFY(writeFile(path, text));
 
         auto res1 = loadProfileFile(path);
@@ -127,11 +122,8 @@ private slots:
         QTemporaryDir dir;
         QVERIFY(dir.isValid());
         const QString path = dir.filePath("profile.json");
-
-        const QByteArray text =
-            R"({ "schemaVersion": 1, "stickers": 
+        const QByteArray text = R"({ "schemaVersion": 1, "stickers": 
             [ { "id": "one", "source": "one.png" }, { "id": "two", "source": "two.png" } ] })";
-
         QVERIFY(writeFile(path, text));
 
         auto res1 = loadProfileFile(path);
@@ -155,8 +147,10 @@ private slots:
     void noDefaults() {
         QTemporaryDir dir;
         QVERIFY(dir.isValid());
-        const QString path = copyFixture(dir, "valid_config.json");
-        QVERIFY2(!path.isEmpty(), "fixture not found");
+        const QString path = dir.filePath("valid.json");
+        const QByteArray text = R"({ "name": "validConfig", "schemaVersion": 1, "stickers": [ { "id": "stickerId",
+            "source": "someStickerPath" } ] })";
+        QVERIFY(writeFile(path, text));
 
         auto res1 = loadProfileFile(path);
 
@@ -177,8 +171,10 @@ private slots:
     void GUIStyleChange() {
         QTemporaryDir dir;
         QVERIFY(dir.isValid());
-        const QString path = copyFixture(dir, "valid_config.json");
-        QVERIFY2(!path.isEmpty(), "fixture not found");
+        const QString path = dir.filePath("valid.json");
+        const QByteArray text = R"({ "name": "validConfig", "schemaVersion": 1, "stickers": [ { "id": "stickerId",
+            "source": "someStickerPath" } ] })";
+        QVERIFY(writeFile(path, text));
 
         auto res1 = loadProfileFile(path);
 
@@ -201,10 +197,8 @@ private slots:
         QTemporaryDir dir;
         QVERIFY(dir.isValid());
         const QString path = dir.filePath("profile.json");
-
         const QByteArray text = R"({ "schemaVersion": 1, "stickers": [
             { "source": "no_id.png" }, 5, { "id": "a", "source": "a.png" } ] })";
-        
         QVERIFY(writeFile(path, text));
 
         auto res = loadProfileFile(path);
@@ -225,10 +219,8 @@ private slots:
         QTemporaryDir dir;
         QVERIFY(dir.isValid());
         const QString path = dir.filePath("profile.json");
-
         const QByteArray text = R"({ "schemaVersion": 1, "stickers": [
             5, { "id": "a", "source": "a.png" }, "text", { "id": "b", "source": "b.png" } ] })";
-        
         QVERIFY(writeFile(path, text));
 
         auto res = loadProfileFile(path);
