@@ -4,6 +4,7 @@
 #include <QFile>
 #include <QIODevice>
 #include <QFileDevice>
+#include <QScopeGuard>
 #include <QtTest>
 
 using namespace mrst;
@@ -99,7 +100,11 @@ private slots:
         const QByteArray text = R"({ "schemaVersion": 1, "activeProfile": "x.json" })";
         QVERIFY(writeFile(path, text));
 
+        QFileDevice::Permissions originalPerms = QFile::permissions(dir.path());
         QVERIFY(QFile::setPermissions(dir.path(), QFileDevice::Permissions{}));
+        auto resetPerms = qScopeGuard([path = dir.path(), originalPerms] {
+            QFile::setPermissions(path, originalPerms);
+        });
         if (QFile(path).open(QIODevice::ReadOnly))
             QSKIP("permissions are not enforced here (running as root?)");
 
