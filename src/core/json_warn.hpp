@@ -19,4 +19,4 @@ namespace mrst {
     void warnInvalidJson(const QString& _errorText, const qsizetype _offset, const ParseContext& _ctx);
     void warnUnreadable(const QString& _errorText, const ParseContext& _ctx);
     void warnInvalidFileName(const QString& _key, const ParseContext& _ctx);
-} //namespace mrst
+} // namespace mrst

@@ -64,4 +64,4 @@ namespace mrst {
 
         return prof;
     }
-} //namespace mrst
+} // namespace mrst

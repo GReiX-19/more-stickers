@@ -13,4 +13,4 @@ namespace mrst {
     };
 
     LoadStateResult loadStateFile(const QString& _path);
-}
+} // namespace mrst

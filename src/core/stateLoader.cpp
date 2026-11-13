@@ -33,4 +33,4 @@ namespace mrst {
         
         return result;
     }
-}
+} // namespace mrst

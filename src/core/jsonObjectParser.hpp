@@ -25,4 +25,4 @@ namespace mrst {
 
         return doc.object();
     }
-}
+} // namespace mrst

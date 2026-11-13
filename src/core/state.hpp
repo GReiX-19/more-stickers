@@ -15,4 +15,4 @@ namespace mrst {
 
     std::optional<QJsonObject> parseStateJson(const QByteArray& _json, QList<Warning>& _warnings);
     std::optional<State> parseState(const QJsonObject& _obj, QList<Warning>& _warnings);
-}
+} // namespace mrst

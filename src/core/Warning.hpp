@@ -33,4 +33,4 @@ namespace mrst {
         WarningEffect effect;
         QList<Warning>& warnings;
     };
-} //namespace mrst
+} // namespace mrst

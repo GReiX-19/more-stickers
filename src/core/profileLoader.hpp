@@ -13,4 +13,4 @@ namespace mrst {
     };
 
     LoadResult loadProfileFile(const QString& _path);
-}
+} // namespace mrst

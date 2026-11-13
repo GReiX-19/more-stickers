@@ -41,4 +41,4 @@ namespace mrst {
 
         return state;
     }
-}
+} // namespace mrst

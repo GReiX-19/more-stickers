@@ -78,4 +78,4 @@ namespace mrst {
             return std::nullopt;
         return st;
     }
-} //namespace mrst
+} // namespace mrst
