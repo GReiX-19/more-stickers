@@ -21,6 +21,8 @@ add_library(mrst_core STATIC
     stateLoader.hpp
     stateLoader.cpp
     jsonObjectParser.hpp
+    stateSaver.hpp
+    stateSaver.cpp
 )
 
 target_include_directories(mrst_core PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
