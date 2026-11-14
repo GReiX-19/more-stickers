@@ -12,6 +12,11 @@ namespace mrst {
         return obj;
     }
     bool saveStateFile(const QString& _path, const State& _state, QString* _error) {
+        if (const QString problem = validateState(_state); !problem.isEmpty()) {
+            if (_error) *_error = problem;
+            return false;
+        }
+
         QSaveFile f(_path);
         if (!f.open(QIODevice::WriteOnly)) {
             if (_error) *_error = f.errorString();

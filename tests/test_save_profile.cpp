@@ -7,6 +7,7 @@
 #include <QIODevice>
 #include <QJsonArray>
 #include <QJsonDocument>
+#include <QScopeGuard>
 #include <QtTest>
 
 using namespace mrst;
@@ -24,6 +25,10 @@ class SaveProfileTest : public QObject {
         if (!f.open(QIODevice::ReadOnly))
             return {};
         return QJsonDocument::fromJson(f.readAll()).object();
+    }
+    static QByteArray readFile(const QString& _path) {
+        QFile f(_path);
+        return f.open(QIODevice::ReadOnly) ? f.readAll() : QByteArray{};
     }
 
 private slots:
@@ -259,9 +264,24 @@ private slots:
         const QByteArray original = R"({ "schemaVersion": 1, "stickers": [] })";
         QVERIFY(writeFile(path, original));
 
+        const auto originalPerms = QFile::permissions(dir.path());
+        auto restore = qScopeGuard([p = dir.path(), originalPerms] {
+            QFile::setPermissions(p, originalPerms);
+            });
+        
+        QVERIFY(QFile::setPermissions(dir.path(), QFileDevice::ReadOwner | QFileDevice::ExeOwner));
+        QFile probe(dir.filePath("probe"));
+        if (probe.open(QIODevice::WriteOnly))
+            QSKIP("permissions are not enforced here (running as root?)");
+
         Profile prof;
         prof.schemaVersion = 1;
-        QVERIFY(saveProfileFile(path, prof, nullptr));
+        prof.name = "changed";
+        
+        QString error;
+        QVERIFY(!saveProfileFile(path, prof, &error));
+        QVERIFY(!error.isEmpty());
+        QCOMPARE(readFile(path), original);
     }
 };
 

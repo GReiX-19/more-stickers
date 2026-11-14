@@ -13,6 +13,9 @@ namespace mrst {
         QString activeProfile;
     };
 
+    bool isPlainFileName(const QString& _name);
+    QString validateState(const State& _state);
+
     std::optional<QJsonObject> parseStateJson(const QByteArray& _json, QList<Warning>& _warnings);
     std::optional<State> parseState(const QJsonObject& _obj, QList<Warning>& _warnings);
 } // namespace mrst
