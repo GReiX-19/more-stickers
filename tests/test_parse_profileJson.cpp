@@ -25,7 +25,7 @@ private slots:
         QList<Warning> lw;
         auto p = parseProfile(obj, lw);
 
-        QCOMPARE(p.has_value(), false);
+        QVERIFY(!p.has_value());
         QCOMPARE(lw.size(), 1);
         QCOMPARE(lw[0].key, "schemaVersion");
         QCOMPARE(lw[0].kind, Warning::Kind::WrongType);
@@ -36,7 +36,7 @@ private slots:
         QList<Warning> lw;
         auto p = parseProfile(obj, lw);
 
-        QCOMPARE(p.has_value(), false);
+        QVERIFY(!p.has_value());
         QCOMPARE(lw.size(), 1);
         QCOMPARE(lw[0].key, "schemaVersion");
         QCOMPARE(lw[0].kind, Warning::Kind::InvalidValue);
@@ -47,7 +47,7 @@ private slots:
         QList<Warning> lw;
         auto p = parseProfile(obj, lw);
 
-        QCOMPARE(p.has_value(), false);
+        QVERIFY(!p.has_value());
         QCOMPARE(lw.size(), 1);
         QCOMPARE(lw[0].key, "schemaVersion");
         QCOMPARE(lw[0].kind, Warning::Kind::WrongType);
@@ -58,7 +58,7 @@ private slots:
         QList<Warning> lw;
         auto p = parseProfile(obj, lw);
 
-        QCOMPARE(p.has_value(), false);
+        QVERIFY(!p.has_value());
         QCOMPARE(lw.size(), 1);
         QCOMPARE(lw[0].key, "name");
         QCOMPARE(lw[0].kind, Warning::Kind::WrongType);
@@ -69,7 +69,7 @@ private slots:
         QList<Warning> lw;
         auto p = parseProfile(obj, lw);
 
-        QCOMPARE(p.has_value(), false);
+        QVERIFY(!p.has_value());
         QCOMPARE(lw.size(), 1);
         QCOMPARE(lw[0].key, "stickers");
         QCOMPARE(lw[0].kind, Warning::Kind::Missing);
@@ -80,7 +80,7 @@ private slots:
         QList<Warning> lw;
         auto p = parseProfile(obj, lw);
 
-        QCOMPARE(p.has_value(), false);
+        QVERIFY(!p.has_value());
         QCOMPARE(lw.size(), 1);
         QCOMPARE(lw[0].key, "stickers");
         QCOMPARE(lw[0].kind, Warning::Kind::WrongType);
@@ -160,7 +160,7 @@ private slots:
         QList<Warning> lw;
         auto obj = parseProfileJson("{ \"schemaVersion\": ", lw);
 
-        QCOMPARE(obj.has_value(), false);
+        QVERIFY(!obj.has_value());
         QCOMPARE(lw.size(), 1);
         QCOMPARE(lw[0].where, "profile");
         QCOMPARE(lw[0].kind, Warning::Kind::InvalidJson);
@@ -170,7 +170,7 @@ private slots:
         QList<Warning> lw;
         auto obj = parseProfileJson("[1, 2]", lw);
 
-        QCOMPARE(obj.has_value(), false);
+        QVERIFY(!obj.has_value());
         QCOMPARE(lw.size(), 1);
         QCOMPARE(lw[0].where, "profile");
         QCOMPARE(lw[0].kind, Warning::Kind::WrongType);
@@ -189,7 +189,7 @@ private slots:
         QList<Warning> lw;
         auto obj = parseProfileJson("", lw);
 
-        QCOMPARE(obj.has_value(), false);
+        QVERIFY(!obj.has_value());
         QCOMPARE(lw.size(), 1);
         QCOMPARE(lw[0].where, "profile");
         QCOMPARE(lw[0].kind, Warning::Kind::InvalidJson);
@@ -199,7 +199,7 @@ private slots:
         QList<Warning> lw;
         auto obj = parseProfileJson("5", lw);
 
-        QCOMPARE(obj.has_value(), false);
+        QVERIFY(!obj.has_value());
         QCOMPARE(lw.size(), 1);
         QCOMPARE(lw[0].where, "profile");
         QCOMPARE(lw[0].kind, Warning::Kind::InvalidJson);

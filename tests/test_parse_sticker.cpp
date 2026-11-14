@@ -25,7 +25,7 @@ private slots:
         QList<Warning> lw;
         auto st = parseSticker(obj, 0, lw);
 
-        QCOMPARE(st.has_value(), false);
+        QVERIFY(!st.has_value());
         QCOMPARE(lw.size(), 1);
         QCOMPARE(lw[0].key, "id");
         QCOMPARE(lw[0].kind, Warning::Kind::Missing);
@@ -37,7 +37,7 @@ private slots:
         QList<Warning> lw;
         auto st = parseSticker(obj, 0, lw);
 
-        QCOMPARE(st.has_value(), false);
+        QVERIFY(!st.has_value());
         QCOMPARE(lw.size(), 2);
         QCOMPARE(lw[0].key, "id");
         QCOMPARE(lw[0].kind, Warning::Kind::WrongType);
@@ -51,7 +51,7 @@ private slots:
         QList<Warning> lw;
         auto st = parseSticker(obj, 0, lw);
 
-        QCOMPARE(st.has_value(), false);
+        QVERIFY(!st.has_value());
         QCOMPARE(lw.size(), 2);
         QCOMPARE(lw[0].key, "id");
         QCOMPARE(lw[0].kind, Warning::Kind::Empty);
@@ -94,7 +94,7 @@ private slots:
         QList<Warning> lw;
         auto st = parseSticker(obj, 0, lw);
 
-        QCOMPARE(st.has_value(), false);
+        QVERIFY(!st.has_value());
         QCOMPARE(lw.size(), 1);
         QCOMPARE(lw[0].key, "enabled");
         QCOMPARE(lw[0].kind, Warning::Kind::WrongType);
@@ -114,7 +114,7 @@ private slots:
         QList<Warning> lw;
         auto st = parseSticker(obj, 0, lw);
 
-        QCOMPARE(st.has_value(), false);
+        QVERIFY(!st.has_value());
         QCOMPARE(lw.size(), 1);
         QCOMPARE(lw[0].key, "monitor");
         QCOMPARE(lw[0].kind, Warning::Kind::WrongType);
@@ -134,7 +134,7 @@ private slots:
         QList<Warning> lw;
         auto st = parseSticker(obj, 0, lw);
 
-        QCOMPARE(st.has_value(), false);
+        QVERIFY(!st.has_value());
         QCOMPARE(lw.size(), 1);
         QCOMPARE(lw[0].key, "sizeMode");
         QCOMPARE(lw[0].kind, Warning::Kind::WrongType);
@@ -145,7 +145,7 @@ private slots:
         QList<Warning> lw;
         auto st = parseSticker(obj, 0, lw);
 
-        QCOMPARE(st.has_value(), false);
+        QVERIFY(!st.has_value());
         QCOMPARE(lw.size(), 1);
         QCOMPARE(lw[0].key, "sizeMode");
         QCOMPARE(lw[0].kind, Warning::Kind::InvalidValue);
@@ -165,7 +165,7 @@ private slots:
         QList<Warning> lw;
         auto st = parseSticker(obj, 0, lw);
 
-        QCOMPARE(st.has_value(), false);
+        QVERIFY(!st.has_value());
         QCOMPARE(lw.size(), 2);
         QCOMPARE(lw[0].key, "width");
         QCOMPARE(lw[0].kind, Warning::Kind::OutOfRange);
@@ -189,7 +189,7 @@ private slots:
         QList<Warning> lw;
         auto st = parseSticker(obj, 0, lw);
 
-        QCOMPARE(st.has_value(), false);
+        QVERIFY(!st.has_value());
         QCOMPARE(lw.size(), 1);
         QCOMPARE(lw[0].key, "scale");
         QCOMPARE(lw[0].kind, Warning::Kind::OutOfRange);
@@ -200,7 +200,7 @@ private slots:
         QList<Warning> lw;
         auto st = parseSticker(obj, 0, lw);
 
-        QCOMPARE(st.has_value(), false);
+        QVERIFY(!st.has_value());
         QCOMPARE(lw.size(), 1);
         QCOMPARE(lw[0].key, "width");
         QCOMPARE(lw[0].kind, Warning::Kind::WrongType);
@@ -244,7 +244,7 @@ private slots:
         QList<Warning> lw;
         auto st = parseSticker(obj, 0, lw);
 
-        QCOMPARE(st.has_value(), false);
+        QVERIFY(!st.has_value());
         QCOMPARE(lw.size(), 1);
         QCOMPARE(lw[0].key, "opacity");
         QCOMPARE(lw[0].kind, Warning::Kind::WrongType);

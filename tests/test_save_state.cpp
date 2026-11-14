@@ -51,10 +51,22 @@ private slots:
         state.activeProfile = "x.json";
 
         QString error;
-        QCOMPARE(saveStateFile(path, state, &error), false);
+        QVERIFY(!saveStateFile(path, state, &error));
         QVERIFY(!error.isEmpty());
         QVERIFY(!QFileInfo::exists(path));
         QVERIFY(!QDir(folder).exists());
+    }
+    void saveDefaultState() {
+        QTemporaryDir dir;
+        QVERIFY(dir.isValid());
+        const QString path = dir.filePath("state.json");
+
+        State state;
+
+        QString error;
+        QVERIFY(!saveStateFile(path, state, &error));
+        QVERIFY(!error.isEmpty());
+        QVERIFY(!QFileInfo::exists(path));
     }
 };
 

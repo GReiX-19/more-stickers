@@ -40,7 +40,7 @@ private slots:
 
         auto res = loadStateFile(path);
 
-        QCOMPARE(res.state.has_value(), false);
+        QVERIFY(!res.state.has_value());
         QCOMPARE(res.warnings.size(), 0);
     }
     void emptyFile() {
@@ -53,7 +53,7 @@ private slots:
         QVERIFY(QFile::exists(path));
         auto res = loadStateFile(path);
 
-        QCOMPARE(res.state.has_value(), false);
+        QVERIFY(!res.state.has_value());
         QCOMPARE(res.warnings.size(), 1);
         QCOMPARE(res.warnings[0].where, "state");
         QCOMPARE(res.warnings[0].kind, Warning::Kind::InvalidJson);
@@ -68,7 +68,7 @@ private slots:
 
         auto res = loadStateFile(path);
 
-        QCOMPARE(res.state.has_value(), false);
+        QVERIFY(!res.state.has_value());
         QCOMPARE(res.warnings.size(), 1);
         QCOMPARE(res.warnings[0].where, "state");
         QCOMPARE(res.warnings[0].kind, Warning::Kind::InvalidJson);
@@ -87,7 +87,7 @@ private slots:
 
         auto res = loadStateFile(path);
 
-        QCOMPARE(res.state.has_value(), false);
+        QVERIFY(!res.state.has_value());
         QCOMPARE(res.warnings.size(), 1);
         QCOMPARE(res.warnings[0].where, "state");
         QCOMPARE(res.warnings[0].kind, Warning::Kind::Unreadable);
@@ -110,7 +110,7 @@ private slots:
 
         auto res = loadStateFile(path);
         
-        QCOMPARE(res.state.has_value(), false);
+        QVERIFY(!res.state.has_value());
         QCOMPARE(res.warnings.size(), 0);
     }
 };

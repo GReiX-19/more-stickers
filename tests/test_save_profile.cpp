@@ -247,7 +247,7 @@ private slots:
         prof.schemaVersion = 1;
 
         QString error;
-        QCOMPARE(saveProfileFile(path, prof, &error), false);
+        QVERIFY(!saveProfileFile(path, prof, &error));
         QVERIFY(!error.isEmpty());
         QVERIFY(!QFileInfo::exists(path));
         QVERIFY(!QDir(folder).exists());

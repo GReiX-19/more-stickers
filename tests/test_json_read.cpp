@@ -17,7 +17,7 @@ private slots:
         int out = 0;
         bool ok = readInt(obj, "schemaVersion", FieldOption::Required, out, ctx);
 
-        QCOMPARE(ok, true);
+        QVERIFY(ok);
         QCOMPARE(out, 1);
         QCOMPARE(lw.size(), 0);
     }
@@ -29,7 +29,7 @@ private slots:
         int out = 0;
         bool ok = readInt(obj, "schemaVersion", FieldOption::Required, out, ctx);
 
-        QCOMPARE(ok, false);
+        QVERIFY(!ok);
         QCOMPARE(out, 0);
         QCOMPARE(lw.size(), 1);
         QCOMPARE(lw[0].key, "schemaVersion");
@@ -44,7 +44,7 @@ private slots:
         int out = 0;
         bool ok = readInt(obj, "schemaVersion", FieldOption::Required, out, ctx);
 
-        QCOMPARE(ok, false);
+        QVERIFY(!ok);
         QCOMPARE(out, 0);
         QCOMPARE(lw.size(), 1);
         QCOMPARE(lw[0].key, "schemaVersion");
@@ -59,7 +59,7 @@ private slots:
         int out = 0;
         bool ok = readInt(obj, "schemaVersion", FieldOption::Required, out, ctx);
 
-        QCOMPARE(ok, false);
+        QVERIFY(!ok);
         QCOMPARE(out, 0);
         QCOMPARE(lw.size(), 1);
         QCOMPARE(lw[0].key, "schemaVersion");
@@ -74,7 +74,7 @@ private slots:
         int out = 0;
         bool ok = readInt(obj, "schemaVersion", FieldOptions{}, out, ctx);
 
-        QCOMPARE(ok, true);
+        QVERIFY(ok);
         QCOMPARE(out, 0);
         QCOMPARE(lw.size(), 0);
     }
@@ -86,7 +86,7 @@ private slots:
         int out = 0;
         bool ok = readInt(obj, "schemaVersion", FieldOption::Required, out, ctx);
 
-        QCOMPARE(ok, false);
+        QVERIFY(!ok);
         QCOMPARE(out, 0);
         QCOMPARE(lw.size(), 1);
         QCOMPARE(lw[0].key, "schemaVersion");

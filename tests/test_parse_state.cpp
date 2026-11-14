@@ -23,7 +23,7 @@ private slots:
         QList<Warning> lw;
         auto state = parseState(obj, lw);
 
-        QCOMPARE(state.has_value(), false);
+        QVERIFY(!state.has_value());
         QCOMPARE(lw.size(), 1);
         QCOMPARE(lw[0].key, "schemaVersion");
         QCOMPARE(lw[0].kind, Warning::Kind::InvalidValue);
@@ -34,7 +34,7 @@ private slots:
         QList<Warning> lw;
         auto state = parseState(obj, lw);
 
-        QCOMPARE(state.has_value(), false);
+        QVERIFY(!state.has_value());
         QCOMPARE(lw.size(), 1);
         QCOMPARE(lw[0].key, "schemaVersion");
         QCOMPARE(lw[0].kind, Warning::Kind::Missing);
@@ -45,7 +45,7 @@ private slots:
         QList<Warning> lw;
         auto state = parseState(obj, lw);
 
-        QCOMPARE(state.has_value(), false);
+        QVERIFY(!state.has_value());
         QCOMPARE(lw.size(), 1);
         QCOMPARE(lw[0].key, "schemaVersion");
         QCOMPARE(lw[0].kind, Warning::Kind::WrongType);
@@ -56,7 +56,7 @@ private slots:
         QList<Warning> lw;
         auto state = parseState(obj, lw);
 
-        QCOMPARE(state.has_value(), false);
+        QVERIFY(!state.has_value());
         QCOMPARE(lw.size(), 1);
         QCOMPARE(lw[0].key, "activeProfile");
         QCOMPARE(lw[0].kind, Warning::Kind::Missing);
@@ -67,7 +67,7 @@ private slots:
         QList<Warning> lw;
         auto state = parseState(obj, lw);
 
-        QCOMPARE(state.has_value(), false);
+        QVERIFY(!state.has_value());
         QCOMPARE(lw.size(), 1);
         QCOMPARE(lw[0].key, "activeProfile");
         QCOMPARE(lw[0].kind, Warning::Kind::WrongType);
@@ -78,7 +78,7 @@ private slots:
         QList<Warning> lw;
         auto state = parseState(obj, lw);
 
-        QCOMPARE(state.has_value(), false);
+        QVERIFY(!state.has_value());
         QCOMPARE(lw.size(), 1);
         QCOMPARE(lw[0].key, "activeProfile");
         QCOMPARE(lw[0].kind, Warning::Kind::Empty);
@@ -100,7 +100,7 @@ private slots:
         QList<Warning> lw;
         auto state = parseState(obj, lw);
 
-        QCOMPARE(state.has_value(), false);
+        QVERIFY(!state.has_value());
         QCOMPARE(lw.size(), 1);
         QCOMPARE(lw[0].key, "activeProfile");
         QCOMPARE(lw[0].kind, Warning::Kind::InvalidValue);
