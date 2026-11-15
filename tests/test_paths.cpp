@@ -16,6 +16,7 @@ private slots:
         QCOMPARE(paths.profilesDir(), "/cfg/more-stickers/profiles");
         QCOMPARE(paths.stateFile(), "/cfg/more-stickers/state.json");
         QCOMPARE(paths.stickersDir(), "/data/more-stickers/stickers");
+        QCOMPARE(paths.profilePath("work.json"), "/cfg/more-stickers/profiles/work.json");
     }
     void trailingSlashIgnored() {
         const auto a = pathsUnder("/cfg", "/data");

@@ -8,7 +8,7 @@ namespace mrst {
     std::optional<QString> setActiveProfile(const AppPaths& _paths, const QString& _name) {
         if (!isPlainFileName(_name))
             return QString{ _name + " must be non-empty plain file name (no '/', not '.' or '..')" };
-        QFileInfo info(_paths.profilesDir() + '/' + _name);
+        QFileInfo info(_paths.profilePath(_name));
         if (!info.exists())
             return QString{ info.filePath() + " does not exist" };
         if (!info.isFile())

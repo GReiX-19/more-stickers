@@ -6,6 +6,9 @@ namespace mrst {
     QString AppPaths::profilesDir() const {
         return { configDir + "/profiles" };
     }
+    QString AppPaths::profilePath(const QString& _name) const {
+        return profilesDir() + "/" + _name;
+    }
     QString AppPaths::stateFile() const {
         return { configDir + "/state.json" };
     }

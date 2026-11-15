@@ -8,6 +8,7 @@ namespace mrst {
         QString dataDir;
 
         QString profilesDir() const;
+        QString profilePath(const QString& _name) const;
         QString stateFile() const;
         QString stickersDir() const;
     };
