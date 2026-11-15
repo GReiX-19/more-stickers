@@ -25,6 +25,8 @@ add_library(mrst_core STATIC
     stateSaver.cpp
     stateActions.hpp
     stateActions.cpp
+    cliParser.hpp
+    cliParser.cpp
 )
 
 target_include_directories(mrst_core PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
