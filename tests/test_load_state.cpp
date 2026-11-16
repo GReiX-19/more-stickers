@@ -1,5 +1,6 @@
 #include "stateLoader.hpp"
 #include "Warning.hpp"
+#include "helpers.hpp"
 #include <QTemporaryDir>
 #include <QFile>
 #include <QIODevice>
@@ -11,12 +12,6 @@ using namespace mrst;
 
 class LoadStateTest : public QObject {
     Q_OBJECT;
-
-    static bool writeFile(const QString& _path, const QByteArray& _content) {
-        QFile f(_path);
-        return f.open(QIODevice::WriteOnly | QIODevice::Truncate)
-            and f.write(_content) == _content.size();
-    }
 
 private slots:
     void validStateFile() {
@@ -100,11 +95,7 @@ private slots:
         const QByteArray text = R"({ "schemaVersion": 1, "activeProfile": "x.json" })";
         QVERIFY(writeFile(path, text));
 
-        QFileDevice::Permissions originalPerms = QFile::permissions(dir.path());
-        QVERIFY(QFile::setPermissions(dir.path(), QFileDevice::Permissions{}));
-        auto resetPerms = qScopeGuard([path = dir.path(), originalPerms] {
-            QFile::setPermissions(path, originalPerms);
-        });
+        ReadOnlyDir lock(dir.path());
         if (QFile(path).open(QIODevice::ReadOnly))
             QSKIP("permissions are not enforced here (running as root?)");
 

@@ -1,5 +1,6 @@
 #include "profileLoader.hpp"
 #include "Warning.hpp"
+#include "helpers.hpp"
 #include <QTemporaryDir>
 #include <QFile>
 #include <QtTest>
@@ -8,12 +9,6 @@ using namespace mrst;
 
 class LoadProfileTest : public QObject {
     Q_OBJECT;
-
-    static bool writeFile(const QString& _path, const QByteArray& _content) {
-        QFile f(_path);
-        return f.open(QIODevice::WriteOnly | QIODevice::Truncate)
-            and f.write(_content) == _content.size();
-    }
 
 private slots:
     void validFile() {

@@ -1,5 +1,6 @@
 #include "stateSaver.hpp"
 #include "stateLoader.hpp"
+#include "helpers.hpp"
 #include <QTemporaryDir>
 #include <QByteArray>
 #include <QFileInfo>
@@ -12,16 +13,6 @@ using namespace mrst;
 
 class SaveStateTest : public QObject {
     Q_OBJECT;
-
-    static bool writeFile(const QString& _path, const QByteArray& _content) {
-        QFile f(_path);
-        return f.open(QIODevice::WriteOnly | QIODevice::Truncate)
-            and f.write(_content) == _content.size();
-    }
-    static QByteArray readFile(const QString& _path) {
-        QFile f(_path);
-        return f.open(QIODevice::ReadOnly) ? f.readAll() : QByteArray{};
-    }
 
 private slots:
     void loadChangeSaveLoad() {
@@ -126,14 +117,8 @@ private slots:
         const QByteArray text = R"({ "schemaVersion": 1, "activeProfile": "x.json" })";
         QVERIFY(writeFile(path, text));
 
-        const auto originalPerms = QFile::permissions(dir.path());
-        auto restore = qScopeGuard([p = dir.path(), originalPerms] {
-            QFile::setPermissions(p, originalPerms);
-        });
-
-        QVERIFY(QFile::setPermissions(dir.path(), QFileDevice::ReadOwner | QFileDevice::ExeOwner));
-        QFile probe(dir.filePath("probe"));
-        if (probe.open(QIODevice::WriteOnly))
+        ReadOnlyDir lock(dir.path());
+        if (!lock.enforced())
             QSKIP("permissions are not enforced here (running as root?)");
 
         QString error;

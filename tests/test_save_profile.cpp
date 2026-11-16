@@ -1,5 +1,6 @@
 #include "profileLoader.hpp"
 #include "profileSaver.hpp"
+#include "helpers.hpp"
 #include <QTemporaryDir>
 #include <QDir>
 #include <QFile>
@@ -15,20 +16,11 @@ using namespace mrst;
 class SaveProfileTest : public QObject {
     Q_OBJECT;
 
-    static bool writeFile(const QString& _path, const QByteArray& _content) {
-        QFile f(_path);
-        return f.open(QIODevice::WriteOnly | QIODevice::Truncate)
-            and f.write(_content) == _content.size();
-    }
     static QJsonObject readJsonFile(const QString& _path) {
         QFile f(_path);
         if (!f.open(QIODevice::ReadOnly))
             return {};
         return QJsonDocument::fromJson(f.readAll()).object();
-    }
-    static QByteArray readFile(const QString& _path) {
-        QFile f(_path);
-        return f.open(QIODevice::ReadOnly) ? f.readAll() : QByteArray{};
     }
 
 private slots:
@@ -264,14 +256,8 @@ private slots:
         const QByteArray original = R"({ "schemaVersion": 1, "stickers": [] })";
         QVERIFY(writeFile(path, original));
 
-        const auto originalPerms = QFile::permissions(dir.path());
-        auto restore = qScopeGuard([p = dir.path(), originalPerms] {
-            QFile::setPermissions(p, originalPerms);
-            });
-        
-        QVERIFY(QFile::setPermissions(dir.path(), QFileDevice::ReadOwner | QFileDevice::ExeOwner));
-        QFile probe(dir.filePath("probe"));
-        if (probe.open(QIODevice::WriteOnly))
+        ReadOnlyDir lock(dir.path());
+        if (!lock.enforced())
             QSKIP("permissions are not enforced here (running as root?)");
 
         Profile prof;

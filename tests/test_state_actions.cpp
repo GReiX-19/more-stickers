@@ -1,6 +1,7 @@
 #include "stateActions.hpp"
 #include "stateLoader.hpp"
 #include "appPaths.hpp"
+#include "helpers.hpp"
 #include <QTemporaryDir>
 #include <QDir>
 #include <QFile>
@@ -13,16 +14,6 @@ using namespace mrst;
 
 class StateActionsTest : public QObject {
     Q_OBJECT;
-
-    static bool writeFile(const QString& _path, const QByteArray& _content) {
-        QFile f(_path);
-        return f.open(QIODevice::WriteOnly | QIODevice::Truncate)
-            and f.write(_content) == _content.size();
-    }
-    static QByteArray readFile(const QString& _path) {
-        QFile f(_path);
-        return f.open(QIODevice::ReadOnly) ? f.readAll() : QByteArray{};
-    }
 
 private slots:
     void validNameExistingProfile() {
@@ -88,14 +79,8 @@ private slots:
         const QByteArray text = R"({ "schemaVersion": 1, "activeProfile": "x.json" })";
         QVERIFY(writeFile(paths.stateFile(), text));
 
-        const auto originalPerms = QFile::permissions(paths.configDir);
-        auto restore = qScopeGuard([p = paths.configDir, originalPerms] {
-            QFile::setPermissions(p, originalPerms);
-        });
-
-        QVERIFY(QFile::setPermissions(paths.configDir, QFileDevice::ReadOwner | QFileDevice::ExeOwner));
-        QFile probe(paths.configDir + "/probe" );
-        if (probe.open(QIODevice::WriteOnly))
+        ReadOnlyDir lock(paths.configDir);
+        if (!lock.enforced())
             QSKIP("permissions are not enforced here (running as root?)");
         QVERIFY(QFileInfo(paths.profilesDir() + "/work.json").isFile());
 
