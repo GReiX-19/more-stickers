@@ -21,6 +21,7 @@ private slots:
         auto res = resolveActiveProfile(paths);
         QVERIFY(!res.path.has_value());
         QCOMPARE(res.warnings.size(), 0);
+        QCOMPARE(res.status, ActiveProfile::Status::NoState);
     }
     void validState() {
         QTemporaryDir dir;
@@ -33,6 +34,7 @@ private slots:
         auto res = resolveActiveProfile(paths);
         QVERIFY(res.path.has_value());
         QCOMPARE(res.warnings.size(), 0);
+        QCOMPARE(res.status, ActiveProfile::Status::Ready);
         QCOMPARE(res.path.value(), paths.profilePath("x.json"));
     }
     void malformedState() {
@@ -46,6 +48,7 @@ private slots:
         QVERIFY(!res.path.has_value());
         QCOMPARE(res.warnings.size(), 1);
         QCOMPARE(res.warnings[0].kind, Warning::Kind::InvalidJson);
+        QCOMPARE(res.status, ActiveProfile::Status::Rejected);
     }
     void unsafeActiveProfile() {
         QTemporaryDir dir;
@@ -62,6 +65,29 @@ private slots:
         QCOMPARE(res.warnings[0].key, "activeProfile");
         QCOMPARE(res.warnings[0].kind, Warning::Kind::InvalidValue);
         QCOMPARE(res.warnings[0].effect, WarningEffect::FileRejected);
+        QCOMPARE(res.status, ActiveProfile::Status::Rejected);
+    }
+    void rejectsFileEmptyList() {
+        QVERIFY(!rejectsFile(QList<Warning>{}));
+    }
+    void rejectsFileIgnoresNonFatalWarnings() {
+        const QList<Warning> warnings{
+            { .effect = WarningEffect::ValueAdjusted },
+            { .effect = WarningEffect::StickerSkipped }
+        };
+        QVERIFY(!rejectsFile(warnings));
+    }
+    void rejectsFileDetectsFileRejected() {
+        const QList<Warning> warnings{ { .effect = WarningEffect::FileRejected } };
+        QVERIFY(rejectsFile(warnings));
+    }
+    void rejectsFileFindsItAmongOthers() {
+        const QList<Warning> warnings{
+            { .effect = WarningEffect::ValueAdjusted },
+            { .effect = WarningEffect::FileRejected },
+            { .effect = WarningEffect::StickerSkipped }
+        };
+        QVERIFY(rejectsFile(warnings));
     }
 };
 
