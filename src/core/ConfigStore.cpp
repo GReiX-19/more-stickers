@@ -9,9 +9,7 @@ namespace mrst {
         LoadResult res = loadProfileFile(m_path);
         
         m_warnings = std::move(res.warnings);
-
-        if (res.profile)
-            m_profile = std::move(res.profile);
+        m_profile = std::move(res.profile);
 
         emit changed();
     }

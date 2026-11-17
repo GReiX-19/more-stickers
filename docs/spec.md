@@ -52,7 +52,7 @@
 
 | Situation | Behavior |
 | :--- | :--- |
-| Invalid JSON, wrong top-level shape, missing or unsupported `schemaVersion` | whole file rejected, keep last good state, warn |
+| Invalid JSON, wrong top-level shape, missing or unsupported `schemaVersion` | whole file rejected, show nothing, warn |
 | Missing required field, or any wrong-typed field in a `sticker` | skip that sticker, warn |
 | Duplicate `id` | skip the later one, warn |
 | `opacity` out of range | clamp, warn |

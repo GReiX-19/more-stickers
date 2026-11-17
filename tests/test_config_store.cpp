@@ -36,8 +36,7 @@ private slots:
 
         QVERIFY(writeFile(path, broken));
         store.reload();
-        QVERIFY(store.profile().has_value());
-        QCOMPARE(store.profile()->name, "one");
+        QVERIFY(!store.profile().has_value());
         QCOMPARE(store.warnings().size(), 1);
         QCOMPARE(store.warnings()[0].kind, Warning::Kind::InvalidJson);
 
@@ -82,7 +81,7 @@ private slots:
 
         QCOMPARE(spy.count(), 1);
     }
-    void deletedFile() {
+    void deletedFileClearsProfile() {
         QTemporaryDir dir;
         QVERIFY(dir.isValid());
         const QString path = dir.filePath("profile.json");
@@ -100,7 +99,7 @@ private slots:
 
         QVERIFY(QFile::remove(path));
         store.reload();
-        QVERIFY(store.profile().has_value());
+        QVERIFY(!store.profile().has_value());
         QCOMPARE(store.warnings().size(), 1);
         QCOMPARE(store.warnings()[0].kind, Warning::Kind::Unreadable);
         QCOMPARE(store.warnings()[0].effect, WarningEffect::FileRejected);
