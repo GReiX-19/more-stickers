@@ -29,6 +29,10 @@ add_library(mrst_core STATIC
     cliParser.cpp
     activeProfile.hpp
     activeProfile.cpp
+    snapshot.hpp
+    snapshot.cpp
+    snapshotEncoder.hpp
+    snapshotEncoder.cpp
 )
 
 target_include_directories(mrst_core PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
