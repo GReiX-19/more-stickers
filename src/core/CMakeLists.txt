@@ -33,6 +33,8 @@ add_library(mrst_core STATIC
     snapshot.cpp
     snapshotEncoder.hpp
     snapshotEncoder.cpp
+    snapshotLoader.hpp
+    snapshotLoader.cpp
 )
 
 target_include_directories(mrst_core PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
