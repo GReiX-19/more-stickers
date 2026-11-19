@@ -35,4 +35,4 @@ namespace mrst {
 
     Snapshot buildSnapshot(ActiveProfile::Status _active, const std::optional<Profile>& _profile,
         const QString& _stickersDir);
-}
+} // namespace mrst

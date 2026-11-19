@@ -46,4 +46,4 @@ namespace mrst {
 
         return snap;
     }
-}
+} // namespace mrst

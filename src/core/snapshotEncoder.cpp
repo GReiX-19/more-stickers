@@ -44,4 +44,4 @@ namespace mrst {
 
         return QJsonDocument(obj).toJson(QJsonDocument::Compact);
     }
-}
+} // namespace mrst
