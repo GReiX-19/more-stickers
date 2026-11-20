@@ -86,6 +86,8 @@ private slots:
 
         auto res = loadSnapshot(paths);
         QCOMPARE(res.snapshot.status, Snapshot::Status::Ok);
+        QVERIFY(res.profilePath.has_value());
+        QCOMPARE(res.profilePath.value(), paths.profilesDir() + "/x.json");
         QCOMPARE(res.snapshot.stickers.size(), 2);
         QCOMPARE(res.snapshot.stickers[0].id, "sticker1");
         QCOMPARE(res.snapshot.stickers[0].path, paths.stickersDir() + "/stPath1");
@@ -105,6 +107,8 @@ private slots:
 
         auto res = loadSnapshot(paths);
         QCOMPARE(res.snapshot.status, Snapshot::Status::Ok);
+        QVERIFY(res.profilePath.has_value());
+        QCOMPARE(res.profilePath.value(), paths.profilesDir() + "/x.json");
         QCOMPARE(res.snapshot.stickers.size(), 1);
         QCOMPARE(res.snapshot.stickers[0].id, "sticker1");
         QCOMPARE(res.snapshot.stickers[0].path, paths.stickersDir() + "/stPath1");
@@ -136,6 +140,8 @@ private slots:
 
         auto res = loadSnapshot(paths);
         QCOMPARE(res.snapshot.status, Snapshot::Status::Ok);
+        QVERIFY(res.profilePath.has_value());
+        QCOMPARE(res.profilePath.value(), paths.profilesDir() + "/good.json");
         QCOMPARE(res.snapshot.stickers.size(), 2);
         QCOMPARE(res.snapshot.stickers[0].id, "stickerX1");
         QCOMPARE(res.snapshot.stickers[1].id, "stickerX2");

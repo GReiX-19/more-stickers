@@ -3,6 +3,8 @@
 #include "snapshot.hpp"
 #include "Warning.hpp"
 #include <QList>
+#include <QString>
+#include <optional>
 
 namespace mrst {
     struct Snapshot;
@@ -10,6 +12,7 @@ namespace mrst {
 
     struct SnapshotResult {
         Snapshot snapshot;
+        std::optional<QString> profilePath;
         QList<Warning> warnings;
     };
 

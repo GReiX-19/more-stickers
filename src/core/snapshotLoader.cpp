@@ -14,6 +14,7 @@ namespace mrst {
         if (active.status == ActiveProfile::Status::Ready) {
             prof = loadProfileFile(*active.path);
             res.warnings.append(prof.warnings);
+            res.profilePath = *active.path;
         }
 
         res.snapshot = buildSnapshot(active.status, prof.profile, _paths.stickersDir());
