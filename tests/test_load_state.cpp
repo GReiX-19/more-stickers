@@ -9,6 +9,7 @@
 #include <QtTest>
 
 using namespace mrst;
+using namespace mrst::tests;
 
 class LoadStateTest : public QObject {
     Q_OBJECT;

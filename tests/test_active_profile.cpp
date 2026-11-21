@@ -7,6 +7,7 @@
 #include <QTest>
 
 using namespace mrst;
+using namespace mrst::tests;
 
 class ActiveProfileTest : public QObject {
     Q_OBJECT;

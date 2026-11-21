@@ -1,26 +1,13 @@
 #include "snapshot.hpp"
+#include "helpers.hpp"
 #include <QJsonValue>
 #include <QTest>
 
 using namespace mrst;
+using namespace mrst::tests;
 
 class SnapshotTest : public QObject {
     Q_OBJECT;
-
-    static Sticker makeSticker(const QString& _id, const QString& _source, bool _enabled = true) {
-        Sticker st{};
-        st.id = _id;
-        st.source = _source;
-        st.enabled = _enabled;
-        return st;
-    }
-    static Profile makeProfile(const QString& _name, const QList<Sticker>& _stickers) {
-        Profile prof{};
-        prof.schemaVersion = 1;
-        prof.name = _name;
-        prof.stickers = _stickers;
-        return prof;
-    }
 
 private slots:
     void noStateGivesNoActiveProfile() {

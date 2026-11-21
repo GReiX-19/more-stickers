@@ -11,6 +11,7 @@
 #include <QTest>
 
 using namespace mrst;
+using namespace mrst::tests;
 
 class StateActionsTest : public QObject {
     Q_OBJECT;

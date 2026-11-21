@@ -12,6 +12,7 @@
 #include <QtTest>
 
 using namespace mrst;
+using namespace mrst::tests;
 
 class SaveProfileTest : public QObject {
     Q_OBJECT;

@@ -6,6 +6,7 @@
 #include <QtTest>
 
 using namespace mrst;
+using namespace mrst::tests;
 
 class LoadProfileTest : public QObject {
     Q_OBJECT;
