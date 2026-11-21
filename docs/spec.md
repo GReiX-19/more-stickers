@@ -59,6 +59,6 @@
 | Unknown key | ignore, but preserve on write |
 | Missing optional field | use default |
 
-**Warning format:** `stickers[2] (id "cat"): "opacity" expected number, found string "high" - sticker skipped`
+**Warning format:** `stickers[2] (id: "cat"): "opacity" expected number, found string "high" - sticker skipped`
 
 **Command:** `sticker-config --set-profile <file>` checks only that the file exists. On failure it prints to stderr, exits non-zero, and leaves the state file untouched.
