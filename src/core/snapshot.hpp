@@ -18,6 +18,8 @@ namespace mrst {
         double rotation = 0;
         double opacity = 1.0;
         SizeMode sizeMode = SizeMode::Size;
+
+        bool operator==(const SnapshotSticker&) const = default;
     };
 
     struct Snapshot {
@@ -31,6 +33,8 @@ namespace mrst {
         Status status = Status::NoActiveProfile;
         QString profileName;
         QList<SnapshotSticker> stickers;
+
+        bool operator==(const Snapshot&) const = default;
     };
 
     Snapshot buildSnapshot(ActiveProfile::Status _active, const std::optional<Profile>& _profile,

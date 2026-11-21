@@ -26,6 +26,8 @@ namespace mrst {
         QString message;
         Kind kind;
         WarningEffect effect;
+
+        bool operator==(const Warning&) const = default;
     };
 
     struct ParseContext {

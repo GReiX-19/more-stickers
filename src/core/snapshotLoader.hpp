@@ -14,6 +14,8 @@ namespace mrst {
         Snapshot snapshot;
         std::optional<QString> profilePath;
         QList<Warning> warnings;
+
+        bool operator==(const SnapshotResult&) const = default;
     };
 
     SnapshotResult loadSnapshot(const AppPaths& _paths);
