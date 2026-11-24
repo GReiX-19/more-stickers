@@ -9,13 +9,13 @@ class WarningFormatTest : public QObject {
 private slots:
     void specExample() {
         Warning w{ .where = "stickers[2] (id: \"cat\")",
-            .key = "opacity", .message = "expected number, found string \"high\"",
+            .key = "opacity", .message = "expected number, found string \"high\"", .kind = Warning::Kind::WrongType,
             .effect = WarningEffect::StickerSkipped };
 
         QCOMPARE(formatWarning(w), R"(stickers[2] (id: "cat"): "opacity" expected number, found string "high" - sticker skipped)");
     }
     void missingId() {
-        Warning w{ .where = "stickers[1]", .key = "id", .message = "is a required value",
+        Warning w{ .where = "stickers[1]", .key = "id", .message = "is a required value", .kind = Warning::Kind::Missing,
             .effect = WarningEffect::StickerSkipped };
 
         QCOMPARE(formatWarning(w), R"(stickers[1]: "id" is a required value - sticker skipped)");
@@ -43,6 +43,13 @@ private slots:
             .effect = WarningEffect::FileRejected };
 
         QCOMPARE(formatWarning(w), R"(profile: "schemaVersion" must be only "1" - file rejected)");
+    }
+    void newlineInsideValueStaysOneLine() {
+        Warning w{ .where = "stickers[0] (id: \"a\nb\")", .key = "source",
+            .message = "expected string, found number \"1\n2\"",
+            .effect = WarningEffect::StickerSkipped };
+
+        QVERIFY2(!formatWarning(w).contains('\n'), qPrintable(formatWarning(w)));
     }
 };
 
