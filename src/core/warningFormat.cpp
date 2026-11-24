@@ -20,7 +20,8 @@ namespace mrst {
         fw += " " + _w.message;
         fw += effectToString(_w.effect);
 
-        fw.remove('\n');
+        fw.replace('\n', "\\n");
+        fw.replace('\r', "\\r");
         return fw;
     }
 }

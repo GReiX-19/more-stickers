@@ -49,7 +49,8 @@ private slots:
             .message = "expected string, found number \"1\n2\"",
             .effect = WarningEffect::StickerSkipped };
 
-        QVERIFY2(!formatWarning(w).contains('\n'), qPrintable(formatWarning(w)));
+        QVERIFY(!formatWarning(w).contains('\n'));
+        QCOMPARE(formatWarning(w), "stickers[0] (id: \"a\\nb\"): \"source\" expected string, found number \"1\\n2\" - sticker skipped");
     }
 };
 
