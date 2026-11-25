@@ -11,7 +11,7 @@
 | Key | Type | Required | Default | Notes |
 | :--- | :--- | :--- | :--- | :--- |
 | `id` | string | yes | none | non-empty, unique in the file |
-| `source` | string | yes | none | non-empty, relative to the stickers folder |
+| `source` | string | yes | none | non-empty, relative path inside the stickers folder, no absolute paths, no `..` escaping |
 | `enabled` | bool | no | `true` |
 | `monitor` | string | no | first screen | named but not connected means hidden, not an error |
 | `x`, `y` | number | no | `0` each | logical pixels from the top-left of the screen |

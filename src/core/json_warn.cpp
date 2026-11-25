@@ -139,4 +139,15 @@ namespace mrst {
             }
         );
     }
+    void warnInvalidSourcePath(const QString& _key, const ParseContext& _ctx) {
+        _ctx.warnings.append(
+            Warning{
+                _ctx.where,
+                _key,
+                { "must be a relative path inside the stickers folder" },
+                Warning::Kind::InvalidValue,
+                _ctx.effect
+            }
+        );
+    }
 } // namespace mrst

@@ -208,7 +208,7 @@ private slots:
     }
     void correctScaleAndDefaultSizes() {
         QJsonObject obj{ { "id", "a" },{ "source", "a.png" },{ "sizeMode", "scale" },{ "scale", 2 },
-            { "width", 500 }, { "height", 150 } };
+            { "width", 500 },{ "height", 150 } };
         QList<Warning> lw;
         auto st = parseSticker(obj, 0, lw);
 
@@ -267,6 +267,65 @@ private slots:
         QVERIFY(st.has_value());
         QCOMPARE(lw.size(), 0);
         QCOMPARE(st->raw.contains("depth"), true);
+    }
+    void invalidSourcePaths_data() {
+        QTest::addColumn<QString>("source");
+
+        QTest::newRow("a/../../x.png") << "a/../../x.png";
+        QTest::newRow("a/..") << "a/..";
+        QTest::newRow("/etc/passwd") << "/etc/passwd";
+        QTest::newRow(":/x.png") << ":/x.png";
+        QTest::newRow("..") << "..";
+        QTest::newRow("../x.png") << "../x.png";
+        QTest::newRow(".") << ".";
+    }
+    void invalidSourcePaths() {
+        QFETCH(QString, source);
+
+        QJsonObject obj{ { "id", "a" },{ "source", source } };
+        QList<Warning> lw;
+        auto st = parseSticker(obj, 0, lw);
+
+        QVERIFY(!st.has_value());
+        QCOMPARE(lw.size(), 1);
+        QCOMPARE(lw[0].key, "source");
+        QCOMPARE(lw[0].kind, Warning::Kind::InvalidValue);
+        QCOMPARE(lw[0].effect, WarningEffect::StickerSkipped);
+    }
+    void validSourcePaths_data() {
+        QTest::addColumn<QString>("source");
+
+        QTest::newRow("a.png") << "a.png";
+        QTest::newRow("sub/../a.png") << "sub/../a.png";
+        QTest::newRow("..hidden.png") << "..hidden.png";
+        QTest::newRow("./a.png") << "./a.png";
+        QTest::newRow("sub/a.png") << "sub/a.png";
+        QTest::newRow("a..b.png") << "a..b.png";
+    }
+    void validSourcePaths() {
+        QFETCH(QString, source);
+
+        QJsonObject obj{ { "id", "a" },{ "source", source } };
+        QList<Warning> lw;
+        auto st = parseSticker(obj, 0, lw);
+
+        QVERIFY(st.has_value());
+        QCOMPARE(lw.size(), 0);
+        QCOMPARE(st->source, source);
+    }
+    void wrongIdAndSource() {
+        QJsonObject obj{ { "id", 123 },{ "source", ":/x.png" } };
+        QList<Warning> lw;
+        auto st = parseSticker(obj, 0, lw);
+
+        QVERIFY(!st.has_value());
+        QCOMPARE(lw.size(), 2);
+        QCOMPARE(lw[0].key, "id");
+        QCOMPARE(lw[0].kind, Warning::Kind::WrongType);
+        QCOMPARE(lw[0].effect, WarningEffect::StickerSkipped);
+        QCOMPARE(lw[1].key, "source");
+        QCOMPARE(lw[1].kind, Warning::Kind::InvalidValue);
+        QCOMPARE(lw[1].effect, WarningEffect::StickerSkipped);
     }
 };
 

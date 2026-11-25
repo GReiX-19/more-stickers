@@ -190,6 +190,19 @@ private slots:
         QCOMPARE(lw[0].effect, WarningEffect::FileRejected);
         QCOMPARE(lw[0].message, "must be a plain file name (no '/', not '.' or '..')");
     }
+    void invalidSourcePathMessage() {
+        QList<Warning> lw;
+        ParseContext ctx{ "stickers[0]", WarningEffect::StickerSkipped, lw };
+
+        warnInvalidSourcePath("source", ctx);
+
+        QCOMPARE(lw.size(), 1);
+        QCOMPARE(lw[0].where, "stickers[0]");
+        QCOMPARE(lw[0].key, "source");
+        QCOMPARE(lw[0].kind, Warning::Kind::InvalidValue);
+        QCOMPARE(lw[0].effect, WarningEffect::StickerSkipped);
+        QCOMPARE(lw[0].message, "must be a relative path inside the stickers folder");
+    }
 };
 
 QTEST_APPLESS_MAIN(ReadJsonTest)

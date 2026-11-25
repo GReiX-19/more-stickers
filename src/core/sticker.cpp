@@ -2,6 +2,7 @@
 #include "json_read.hpp"
 #include "json_warn.hpp"
 #include "Warning.hpp"
+#include <QDir>
 #include <algorithm>
 
 namespace mrst {
@@ -14,6 +15,13 @@ namespace mrst {
 
             return std::nullopt;
         }
+        bool isSourcePathOk(const QString& _source) {
+            if (QDir::isAbsolutePath(_source))
+                return false;
+
+            const QString clean = QDir::cleanPath(_source);
+            return clean != "." and clean != ".." and !clean.startsWith("../");
+        }
     }
 
     std::optional<Sticker> parseSticker(const QJsonObject& _obj, qsizetype _index, QList<Warning>& _warnings) {
@@ -25,7 +33,19 @@ namespace mrst {
         ok = readString(_obj, "id", FieldOption::Required | FieldOption::NonEmpty, st.id, ctx) and ok;
         if (ok) ctx.where += " (id: \"" + st.id + "\")";
 
-        ok = readString(_obj, "source", FieldOption::Required | FieldOption::NonEmpty, st.source, ctx) and ok;
+        QString source;
+        const bool sourceRead = readString(_obj, "source", FieldOption::Required | FieldOption::NonEmpty, source, ctx);
+        ok = sourceRead and ok;
+        if (sourceRead) {
+            if (isSourcePathOk(source)) {
+                st.source = source;
+            }
+            else {
+                warnInvalidSourcePath("source", ctx);
+                ok = false;
+            }
+        }
+
         ok = readBool(_obj, "enabled", FieldOptions{}, st.enabled, ctx) and ok;
 
         QString monitorName;

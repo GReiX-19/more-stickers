@@ -59,7 +59,7 @@ private slots:
         QCOMPARE(res.warnings[0].kind, Warning::Kind::InvalidJson);
         QCOMPARE(res.warnings[0].effect, WarningEffect::FileRejected);
     }
-    void validProfileSkippedSticker() {
+    void validProfileNoIdSkippedSticker() {
         QTemporaryDir dir;
         QVERIFY(dir.isValid());
         const QString path = dir.filePath("valid_with_broken_sticker.json");
@@ -80,6 +80,28 @@ private slots:
         QCOMPARE(res.profile->stickers.size(), 1);
         QCOMPARE(res.profile->stickers[0].id, "stickerId");
         QCOMPARE(res.profile->stickers[0].source, "someStickerPath");
+    }
+    void validProfileInvalidSourceSkippedSticker() {
+        QTemporaryDir dir;
+        QVERIFY(dir.isValid());
+        const QString path = dir.filePath("valid_with_broken_sticker.json");
+        const QByteArray text = R"({ "name": "validWithBrokenSticker", "schemaVersion": 1, "stickers": [ {
+            "id": "st1", "source": "someStickerPath.png" },{ "id": "st2", "source": "/etc/passwd" } ] })";
+        QVERIFY(writeFile(path, text));
+        
+        auto res = loadProfileFile(path);
+
+        QVERIFY(res.profile.has_value());
+        QCOMPARE(res.warnings.size(), 1);
+        QCOMPARE(res.warnings[0].where, "stickers[1] (id: \"st2\")");
+        QCOMPARE(res.warnings[0].key, "source");
+        QCOMPARE(res.warnings[0].kind, Warning::Kind::InvalidValue);
+        QCOMPARE(res.warnings[0].effect, WarningEffect::StickerSkipped);
+        QCOMPARE(res.profile->schemaVersion, 1);
+        QCOMPARE(res.profile->name, "validWithBrokenSticker");
+        QCOMPARE(res.profile->stickers.size(), 1);
+        QCOMPARE(res.profile->stickers[0].id, "st1");
+        QCOMPARE(res.profile->stickers[0].source, "someStickerPath.png");
     }
 };
 
