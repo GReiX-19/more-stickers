@@ -1,5 +1,6 @@
 #include "snapshotEncoder.hpp"
 #include <QString>
+#include <QUrl>
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QJsonDocument>
@@ -18,7 +19,7 @@ namespace mrst {
         QJsonObject snapStickerToJson(const SnapshotSticker& _st) {
             QJsonObject obj;
             obj["id"] = _st.id;
-            obj["path"] = _st.path;
+            obj["url"] = QString::fromUtf8(QUrl::fromLocalFile(_st.path).toEncoded());
             if (_st.monitor)
                 obj["monitor"] = *_st.monitor;
             obj["x"] = _st.x;

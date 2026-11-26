@@ -41,7 +41,7 @@ Scope {
 
         status = snap.status;
         stickers = (snap.status === "ok" && Array.isArray(snap.stickers)) ? snap.stickers : [];
-        console.log("state:", status, "stickers:", stickers.length);
+        console.log("status:", status, "stickers:", stickers.length);
     }
 
     Process {

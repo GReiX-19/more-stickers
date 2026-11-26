@@ -20,14 +20,15 @@ PanelWindow {
     AnimatedImage {
         id: img
         anchors.fill: parent
-        source: "file://" + win.sticker.path
+        source: win.sticker.url
         opacity: win.sticker.opacity
         playing: true
         cache: false
+        onStatusChanged: if (status === Image.Error) console.warn("sticker", win.modelData, "failed to load:", win.sticker.url)
     }
 
     readonly property bool scaled: sticker.sizeMode === "scale"
-    readonly property bool ready: !scaled || img.status === Image.Ready
+    readonly property bool ready: img.status !== Image.Error && (!scaled || img.status === Image.Ready)
 
     visible: ready
     implicitWidth: scaled ? img.implicitWidth * sticker.scale : sticker.width

@@ -95,7 +95,7 @@ private slots:
 
         const QJsonObject first = arr[0].toObject();
         QCOMPARE(first.value("id").toString(), "a");
-        QCOMPARE(first.value("path").toString(), "/stk/a.png");
+        QCOMPARE(first.value("url").toString(), "file:///stk/a.png");
         QCOMPARE(first.value("x").toDouble(), 10.0);
         QCOMPARE(first.value("y").toDouble(), 20.0);
         QCOMPARE(first.value("sizeMode").toString(), "scale");
@@ -107,6 +107,30 @@ private slots:
 
         QCOMPARE(arr[1].toObject().value("id").toString(), "b");
         QCOMPARE(arr[1].toObject().value("sizeMode").toString(), "size");
+    }
+    void shieldedCharacters_data() {
+        QTest::addColumn<QString>("source");
+
+        QTest::newRow("cat #1") << "cat #1";
+        QTest::newRow("100%") << "100%";
+        QTest::newRow("  ") << "  ";
+        QTest::newRow("€£¥∑π∞") << "€£¥∑π∞";
+    }
+    void shieldedCharacters() {
+        QFETCH(QString, source);
+
+        Snapshot snap;
+        snap.status = Snapshot::Status::Ok;
+        snap.profileName = "prof";
+        snap.stickers.append(makeSticker(source));
+
+        const QJsonObject obj = parseObject(encodeSnapshot(snap));
+
+        const QJsonArray arr = obj.value("stickers").toArray();
+        QCOMPARE(arr.size(), 1);
+        const QJsonValue url = arr[0].toObject().value("url");
+        QVERIFY(url.isString());
+        QCOMPARE(QUrl(url.toString()).toLocalFile(), snap.stickers[0].path);
     }
 };
 
