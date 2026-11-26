@@ -11,8 +11,6 @@ PanelWindow {
 
     anchors { top: true; left: true }
     margins { left: sticker.x; top: sticker.y }
-    implicitWidth: sticker.width
-    implicitHeight: sticker.height
 
     WlrLayershell.layer: WlrLayer.Overlay
     exclusionMode: ExclusionMode.Ignore
@@ -20,10 +18,18 @@ PanelWindow {
     mask: Region {}
 
     AnimatedImage {
+        id: img
         anchors.fill: parent
         source: "file://" + win.sticker.path
         opacity: win.sticker.opacity
         playing: true
         cache: false
     }
+
+    readonly property bool scaled: sticker.sizeMode === "scale"
+    readonly property bool ready: !scaled || img.status === Image.Ready
+
+    visible: ready
+    implicitWidth: scaled ? img.implicitWidth * sticker.scale : sticker.width
+    implicitHeight: scaled ? img.implicitHeight * sticker.scale : sticker.height
 }
