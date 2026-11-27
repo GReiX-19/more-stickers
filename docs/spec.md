@@ -82,7 +82,7 @@ Sticker entry: `id`, `url`, `monitor` (only when set), `x`, `y`, `sizeMode`, `wi
 | :--- | :--- |
 | `status` is not `ok` | show nothing |
 | Line is not valid JSON, not an object, or `v` is unsupported | show nothing, log |
-| Feed exits (any reason except SIGTERM) | show nothing, log, restart after 500 ms, doubling each failed attempt up to 5 s; the delay resets when a valid snapshot arrives |
+| Feed exits (any reason except SIGTERM) | show nothing, log, restart after 500 ms, doubling each failed attempt up to 5 s; the delay resets after the feed has been running for 10s |
 | Feed exits on SIGTERM | show nothing, do not restart |
 | Feed binary cannot be started | same as a feed exit (restart with backoff) |
 | `sizeMode` is `"size"` | image is stretched to `width` x `height`; aspect ratio is not preserved |

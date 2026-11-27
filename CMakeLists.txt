@@ -8,6 +8,8 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 find_package(Qt6 REQUIRED COMPONENTS Core Test)
 qt_standard_project_setup()
 
+include(GNUInstallDirs)
+
 enable_testing()
 add_subdirectory(src/core)
 add_subdirectory(src/app)

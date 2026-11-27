@@ -19,7 +19,12 @@ Scope {
         }
         return { order, map }
     }
-
+    
+    function clearOnError() {
+        status = "protocol_error"
+        stickers = []
+        return
+    }
     function applyLine(line) {
         let snap
         try {
@@ -27,22 +32,21 @@ Scope {
         }
         catch (e) {
             console.warn("feed: unparsable line:", e)
-            status = "protocol_error"
-            stickers = []
-            return
+            return clearOnError()
         }
 
-        if (snap === null || typeof snap !== "object" || snap.v !== protocolVersion) {
+        if (snap === null || typeof snap !== "object") {
+            console.warn("feed: snapshot is not an object or is null")
+            return clearOnError()
+        }
+
+        if (snap.v !== protocolVersion) {
             console.warn("feed: unsupported protocol version", snap.v)
-            status = "protocol_error"
-            stickers = []
-            return
+            return clearOnError()
         }
 
         status = snap.status
         stickers = (snap.status === "ok" && Array.isArray(snap.stickers)) ? snap.stickers : []
-        if (!healthyTimer.running)
-            healthyTimer.start()
     }
 
     readonly property int restartBase: 500
@@ -57,13 +61,13 @@ Scope {
     Timer {
         id: healthyTimer
         repeat: false
-        interval: 2000
+        interval: restartMax * 2
         onTriggered: restartDelay = restartBase
     }
 
     Process {
         id: feed
-        command: ["/home/GReiX19/Projects/more-stickers/build/src/feed/sticker-feed"]
+        command: ["sticker-feed"]
         running: true
 
         stdout: SplitParser {
@@ -82,7 +86,10 @@ Scope {
             stoppedBySigterm = (exitCode === 15 && exitStatus === 1)
         }
         onRunningChanged: {
-            if (running) return
+            if (running) {
+                healthyTimer.start()
+                return
+            }
             root.status = "feed_down"
             root.stickers = []
             healthyTimer.stop()
