@@ -39,10 +39,10 @@ Scope {
             return
         }
 
-        restartDelay = restartBase
         status = snap.status
         stickers = (snap.status === "ok" && Array.isArray(snap.stickers)) ? snap.stickers : []
-        console.log("status:", status, "stickers:", stickers.length)
+        if (!healthyTimer.running)
+            healthyTimer.start()
     }
 
     readonly property int restartBase: 500
@@ -53,6 +53,12 @@ Scope {
         id: restartTimer
         repeat: false
         onTriggered: feed.running = true
+    }
+    Timer {
+        id: healthyTimer
+        repeat: false
+        interval: 2000
+        onTriggered: restartDelay = restartBase
     }
 
     Process {
@@ -79,6 +85,7 @@ Scope {
             if (running) return
             root.status = "feed_down"
             root.stickers = []
+            healthyTimer.stop()
             console.warn("feed down, sigterm:", stoppedBySigterm)
             if (!stoppedBySigterm) {
                 console.warn("feed restart in", root.restartDelay, "ms")
