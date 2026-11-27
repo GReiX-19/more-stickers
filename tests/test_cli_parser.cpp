@@ -21,8 +21,7 @@ private slots:
     }
     void noArgs() {
         auto res = parseCommandLine({"sticker-config"});
-        QVERIFY(std::holds_alternative<CliError>(res));
-        QVERIFY(!std::get<CliError>(res).message.isEmpty());
+        QVERIFY(std::holds_alternative<GuiCommand>(res));
     }
     void unknownArg() {
         auto res = parseCommandLine({ "sticker-config", "--set-profile-timeout", "x.json" });
@@ -44,6 +43,15 @@ private slots:
         QVERIFY2(std::holds_alternative<SetProfileCommand>(res),
          qPrintable(std::get_if<CliError>(&res) ? std::get<CliError>(res).message : QString{}));
         QCOMPARE(std::get<SetProfileCommand>(res).name, "../x.json");
+    }
+    void pathsArg() {
+        auto res = parseCommandLine({ "sticker-config", "--paths" });
+        QVERIFY(std::holds_alternative<PathsCommand>(res));
+    }
+    void twoArguments() {
+        auto res = parseCommandLine({ "sticker-config", "--paths", "--set-profile", "x.json" });
+        QVERIFY(std::holds_alternative<CliError>(res));
+        QVERIFY(!std::get<CliError>(res).message.isEmpty());
     }
 };
 

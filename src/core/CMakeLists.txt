@@ -43,6 +43,8 @@ add_library(mrst_core STATIC
     warningFormat.cpp
     snapshotWriter.hpp
     snapshotWriter.cpp
+    formatPaths.hpp
+    formatPaths.cpp
 )
 
 target_include_directories(mrst_core PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

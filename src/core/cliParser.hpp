@@ -6,7 +6,9 @@
 
 namespace mrst {
     struct SetProfileCommand { QString name; };
+    struct PathsCommand {};
+    struct GuiCommand {};
     struct CliError { QString message; };
 
-    std::variant<SetProfileCommand, CliError> parseCommandLine(const QStringList& _args);
+    std::variant<SetProfileCommand, PathsCommand, GuiCommand, CliError> parseCommandLine(const QStringList& _args);
 } // namespace mrst
