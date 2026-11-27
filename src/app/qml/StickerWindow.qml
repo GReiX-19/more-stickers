@@ -7,11 +7,42 @@ PanelWindow {
     required property string modelData
     property var sticker
 
-    Component.onCompleted: console.log("created:", modelData, "sticker is", sticker)
+    readonly property var monitors: {
+        const map = {}
+        for (const scrn of Quickshell.screens) {
+            map[scrn.name] = scrn
+        }
+        return map
+    }
+    readonly property var currentMonitor: {
+        (sticker.monitor === "" || sticker.monitor === undefined) ? Quickshell.screens[0] : monitors[sticker.monitor]
+    }
 
-    anchors { top: true; left: true }
-    margins { left: sticker.x; top: sticker.y }
+    readonly property bool scaled: sticker.sizeMode === "scale"
+    readonly property bool ready: img.status !== Image.Error && (!scaled || img.status === Image.Ready)
 
+    readonly property bool hasMonitor: !!currentMonitor
+    visible: ready && hasMonitor
+
+    readonly property real stW: scaled ? img.implicitWidth * sticker.scale : sticker.width
+    readonly property real stH: scaled ? img.implicitHeight * sticker.scale : sticker.height
+
+    readonly property real rad: sticker.rotation * Math.PI / 180
+    readonly property real boxW: Math.ceil(Math.abs(stW * Math.cos(rad)) + Math.abs(stH * Math.sin(rad)))
+    readonly property real boxH: Math.ceil(Math.abs(stW * Math.sin(rad)) + Math.abs(stH * Math.cos(rad)))
+
+    implicitWidth: boxW
+    implicitHeight: boxH
+    margins {
+        left: Math.round(sticker.x - (boxW - stW) / 2)
+        top: Math.round(sticker.y - (boxH - stH) / 2)
+    }
+
+    screen: currentMonitor
+    anchors { 
+        top: true
+        left: true 
+    }
     WlrLayershell.layer: WlrLayer.Overlay
     exclusionMode: ExclusionMode.Ignore
     color: "transparent"
@@ -19,18 +50,14 @@ PanelWindow {
 
     AnimatedImage {
         id: img
-        anchors.fill: parent
         source: win.sticker.url
+        anchors.centerIn: parent
+        width: win.stW
+        height: win.stH
         opacity: win.sticker.opacity
+        rotation: win.sticker.rotation
         playing: true
         cache: false
         onStatusChanged: if (status === Image.Error) console.warn("sticker", win.modelData, "failed to load:", win.sticker.url)
     }
-
-    readonly property bool scaled: sticker.sizeMode === "scale"
-    readonly property bool ready: img.status !== Image.Error && (!scaled || img.status === Image.Ready)
-
-    visible: ready
-    implicitWidth: scaled ? img.implicitWidth * sticker.scale : sticker.width
-    implicitHeight: scaled ? img.implicitHeight * sticker.scale : sticker.height
 }

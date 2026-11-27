@@ -11,37 +11,48 @@ Scope {
     property var stickers: []
 
     readonly property var index: {
-        const order = [];
-        const map = {};
+        const order = []
+        const map = {}
         for (const st of stickers){
-            order.push(st.id);
-            map[st.id] = st;
+            order.push(st.id)
+            map[st.id] = st
         }
-        return { order, map };
+        return { order, map }
     }
 
     function applyLine(line) {
-        let snap;
+        let snap
         try {
-            snap = JSON.parse(line);
+            snap = JSON.parse(line)
         }
         catch (e) {
-            console.warn("feed: unparsable line:", e);
-            status = "protocol_error";
-            stickers = [];
-            return;
+            console.warn("feed: unparsable line:", e)
+            status = "protocol_error"
+            stickers = []
+            return
         }
 
-        if (snap.v !== protocolVersion) {
-            console.warn("feed: unsupported protocol version", snap.v);
-            status = "protocol_error";
-            stickers = [];
-            return;
+        if (snap === null || typeof snap !== "object" || snap.v !== protocolVersion) {
+            console.warn("feed: unsupported protocol version", snap.v)
+            status = "protocol_error"
+            stickers = []
+            return
         }
 
-        status = snap.status;
-        stickers = (snap.status === "ok" && Array.isArray(snap.stickers)) ? snap.stickers : [];
-        console.log("status:", status, "stickers:", stickers.length);
+        restartDelay = restartBase
+        status = snap.status
+        stickers = (snap.status === "ok" && Array.isArray(snap.stickers)) ? snap.stickers : []
+        console.log("status:", status, "stickers:", stickers.length)
+    }
+
+    readonly property int restartBase: 500
+    readonly property int restartMax: 5000
+    property int restartDelay: restartBase
+
+    Timer {
+        id: restartTimer
+        repeat: false
+        onTriggered: feed.running = true
     }
 
     Process {
@@ -58,7 +69,25 @@ Scope {
             onRead: data => console.warn("feed stderr:", data)
         }
 
-        onExited: (exitCode, exitStatus) => console.warn("feed exited", exitCode, exitStatus)
+        property bool stoppedBySigterm: false
+
+        onExited: (exitCode, exitStatus) => {
+            console.warn("feed exited", exitCode, exitStatus)
+            stoppedBySigterm = (exitCode === 15 && exitStatus === 1)
+        }
+        onRunningChanged: {
+            if (running) return
+            root.status = "feed_down"
+            root.stickers = []
+            console.warn("feed down, sigterm:", stoppedBySigterm)
+            if (!stoppedBySigterm) {
+                console.warn("feed restart in", root.restartDelay, "ms")
+                restartTimer.interval = root.restartDelay
+                restartTimer.start()
+                root.restartDelay = Math.min(root.restartDelay * 2, root.restartMax)
+            }
+            stoppedBySigterm = false
+        }
     }
 
     Variants {
